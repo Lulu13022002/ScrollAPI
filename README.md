@@ -1,5 +1,5 @@
 # ScrollAPI
-A scroll api for a website only for body element
+A simple scroll api for a website only for body element
 
 ### Usage of functions
   * scrollAPI.isEnable() : [boolean] check if the scrollbar is enable

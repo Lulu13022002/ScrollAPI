@@ -14,16 +14,16 @@ A scroll api for a website only for body element
 ### Examples
   ```javascript
   window.addEventListener("load", function() {
-      console.log(scrollAPI.isEnable());
-      console.log(scrollAPI.barWidth());
-      console.log(scrollAPI.isScrollable(document.body));
-      scrollAPI.disable();
-      setTimeout(function() {
-        scrollAPI.enable();
-      }, 1000); //1000 == 1s
-      document.addEventListener("mousedown", function(e) {
-        console.log("right bar: " + scrollAPI.clickedOnBarX(e.offsetY));
-        console.log("bottom bar: " + scrollAPI.clickedOnBarY(e.offsetX));
-        console.log("bottom/right bar: " + scrollAPI.clickedOnBar(e.offsetX, e.offsetY));
-      }, false);
-    });```
+    console.log(scrollAPI.isEnable());
+    console.log(scrollAPI.barWidth());
+    console.log(scrollAPI.isScrollable(document.body));
+    scrollAPI.disable();
+    setTimeout(function() {
+      scrollAPI.enable();
+    }, 1000); //1000 == 1s
+    document.addEventListener("mousedown", function(e) {
+      console.log("right bar: " + scrollAPI.clickedOnBarX(e.offsetY));
+      console.log("bottom bar: " + scrollAPI.clickedOnBarY(e.offsetX));
+      console.log("bottom/right bar: " + scrollAPI.clickedOnBar(e.offsetX, e.offsetY));
+    }, false);
+  });```

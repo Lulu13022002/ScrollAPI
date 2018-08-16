@@ -6,8 +6,8 @@ A scroll api for a website only for body element
   * scrollAPI.enable() : [void] enable the scrollbar
   * scrollAPI.disable() : [void] disable the scrollbar
   * scrollAPI.barWidth() : [number] get the width of scrollbar
-  * scrollAPI.clickedOnBarX(mouseY) : [boolean] check if the user has clicked on the scrollbar at right
-  * scrollAPI.clickedOnBarY(mouseX) : [boolean] check if the user has clicked on the scrollbar at bottom
+  * scrollAPI.clickedOnBarY(mouseX) : [boolean] check if the user has clicked on the scrollbar at right
+  * scrollAPI.clickedOnBarX(mouseY) : [boolean] check if the user has clicked on the scrollbar at bottom
   * scrollAPI.clickedOnBar(mouseX, mouseY) : [boolean] clickedOnBarY() || clickedOnBarX
   * scrollAPI.isScrollable(element) : [boolean] check if the element is scrollable
   
@@ -22,8 +22,8 @@ A scroll api for a website only for body element
       scrollAPI.enable();
     }, 1000); //1000 == 1s
     document.addEventListener("mousedown", function(e) {
-      console.log("right bar: " + scrollAPI.clickedOnBarX(e.offsetY));
-      console.log("bottom bar: " + scrollAPI.clickedOnBarY(e.offsetX));
+      console.log("right bar: " + scrollAPI.clickedOnBarY(e.offsetX));
+      console.log("bottom bar: " + scrollAPI.clickedOnBarX(e.offsetY));
       console.log("bottom/right bar: " + scrollAPI.clickedOnBar(e.offsetX, e.offsetY));
     }, false);
   });

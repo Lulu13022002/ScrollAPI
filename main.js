@@ -2,6 +2,7 @@ var se = false;
 var scrollBar = {x: 0, y: 0};
 var scrollAPI = {
   init : function() {
+    if (!document.addEventListener || !document.removeEventListener) console.log("Please update your navigator");
     document.addEventListener("scroll", function(e) {
       if(!se) {
         /* IE Browser */
@@ -80,13 +81,11 @@ var scrollAPI = {
   disable : function() {
     se = true;
     if(!isPhone()) {
-      if (document.addEventListener) {
-        document.addEventListener('DOMMouseScroll', scrollAPI.preventDefault, false);
-        document.addEventListener('keydown', scrollAPI.preventDefaultForScrollKeys, false);
-        document.addEventListener("scroll", scrollAPI.resetBar, false);
-        document.addEventListener("mousewheel", scrollAPI.preventDefault, false);
-        document.addEventListener("mousedown", scrollAPI.preventMiddleScroll, false);
-      }
+      document.addEventListener('DOMMouseScroll', scrollAPI.preventDefault, false);
+      document.addEventListener('keydown', scrollAPI.preventDefaultForScrollKeys, false);
+      document.addEventListener("scroll", scrollAPI.resetBar, false);
+      document.addEventListener("mousewheel", scrollAPI.preventDefault, false);
+      document.addEventListener("mousedown", scrollAPI.preventMiddleScroll, false);
     } else {
       document.documentElement.style.overflowY = "hidden";
       document.documentElement.style.touchAction = "none";
@@ -95,16 +94,14 @@ var scrollAPI = {
   enable : function() {
     se = false;
     if(!isPhone()) {
-     if (document.removeEventListener) {
-    document.removeEventListener('DOMMouseScroll', scrollAPI.preventDefault, false);
-    document.removeEventListener('keydown', scrollAPI.preventDefaultForScrollKeys, false);
-    document.removeEventListener("scroll", scrollAPI.resetBar, false);
-    document.removeEventListener("mousewheel", scrollAPI.preventDefault, false);
-    document.removeEventListener("mousedown", scrollAPI.preventMiddleScroll, false);
-    }
+      document.removeEventListener('DOMMouseScroll', scrollAPI.preventDefault, false);
+      document.removeEventListener('keydown', scrollAPI.preventDefaultForScrollKeys, false);
+      document.removeEventListener("scroll", scrollAPI.resetBar, false);
+      document.removeEventListener("mousewheel", scrollAPI.preventDefault, false);
+      document.removeEventListener("mousedown", scrollAPI.preventMiddleScroll, false);
     } else {
-    document.documentElement.style.overflowY = "";
-    document.documentElement.style.touchAction = "";
+      document.documentElement.style.overflowY = "";
+      document.documentElement.style.touchAction = "";
     }
   }
 };

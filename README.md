@@ -2,7 +2,7 @@
 A scroll api for a website only for body element
 
 ### Usage of functions
-  * scrollAPI.isEnable() : [boolean] check if the scrollbar is disable
+  * scrollAPI.isEnable() : [boolean] check if the scrollbar is enable
   * scrollAPI.enable() : [void] enable the scrollbar
   * scrollAPI.disable() : [void] disable the scrollbar
   * scrollAPI.barWidth() : [number] get the width of scrollbar

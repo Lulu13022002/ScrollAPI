@@ -2,15 +2,14 @@
 A scroll api for a website only for body element
 
 ### Usage of functions
-  scrollAPI.isEnable() : [boolean] check if the scrollbar is disable
-  
-  scrollAPI.enable() : [void] enable the scrollbar
-  scrollAPI.disable() : [void] disable the scrollbar
-  scrollAPI.barWidth() : [number] get the width of scrollbar
-  scrollAPI.clickedOnBarX(mouseY) : [boolean] check if the user has clicked on the scrollbar at right
-  scrollAPI.clickedOnBarY(mouseX) : [boolean] check if the user has clicked on the scrollbar at bottom
-  scrollAPI.clickedOnBar(mouseX, mouseY) : [boolean] clickedOnBarY() || clickedOnBarX
-  scrollAPI.isScrollable(element) : [boolean] check if the element is scrollable
+  * scrollAPI.isEnable() : [boolean] check if the scrollbar is disable
+  * scrollAPI.enable() : [void] enable the scrollbar
+  * scrollAPI.disable() : [void] disable the scrollbar
+  * scrollAPI.barWidth() : [number] get the width of scrollbar
+  * scrollAPI.clickedOnBarX(mouseY) : [boolean] check if the user has clicked on the scrollbar at right
+  * scrollAPI.clickedOnBarY(mouseX) : [boolean] check if the user has clicked on the scrollbar at bottom
+  * scrollAPI.clickedOnBar(mouseX, mouseY) : [boolean] clickedOnBarY() || clickedOnBarX
+  * scrollAPI.isScrollable(element) : [boolean] check if the element is scrollable
   
 ### Examples
   ```javascript

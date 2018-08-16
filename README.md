@@ -12,7 +12,8 @@ A scroll api for a website only for body element
   scrollAPI.isScrollable(element) : [boolean] check if the element is scrollable
   
 ### Examples
-  > window.addEventListener("load", function() {
+  ```javascript
+  window.addEventListener("load", function() {
       console.log(scrollAPI.isEnable());
       console.log(scrollAPI.barWidth());
       console.log(scrollAPI.isScrollable(document.body));
@@ -25,4 +26,4 @@ A scroll api for a website only for body element
         console.log("bottom bar: " + scrollAPI.clickedOnBarY(e.offsetX));
         console.log("bottom/right bar: " + scrollAPI.clickedOnBar(e.offsetX, e.offsetY));
       }, false);
-    });
+    });```

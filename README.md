@@ -1,6 +1,9 @@
 # ScrollAPI
 A simple scroll api for a website only for body element
 
+### Installation
+  copy and paste the main.js and add `<script src="/main.js"></script> in the html file`
+  
 ### Usage of functions
   * scrollAPI.isEnable() : [boolean] check if the scrollbar is enable
   * scrollAPI.enable() : [void] enable the scrollbar

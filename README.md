@@ -26,4 +26,5 @@ A scroll api for a website only for body element
       console.log("bottom bar: " + scrollAPI.clickedOnBarY(e.offsetX));
       console.log("bottom/right bar: " + scrollAPI.clickedOnBar(e.offsetX, e.offsetY));
     }, false);
-  });```
+  });
+  ```

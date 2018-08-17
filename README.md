@@ -19,7 +19,7 @@ A simple scroll api for a website only for body element
   window.addEventListener("load", function() {
     console.log(scrollAPI.isEnable());
     console.log(scrollAPI.barWidth());
-    console.log(scrollAPI.isScrollable(document.body));
+    console.log(scrollAPI.isScrollable(document.documentElement)); //html element
     scrollAPI.disable();
     setTimeout(function() {
       scrollAPI.enable();

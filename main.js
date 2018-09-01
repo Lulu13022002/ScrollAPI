@@ -18,7 +18,7 @@ function storageAvailable(type) {
 function isMobile() {
   if(storageAvailable("sessionStorage") && "desktop" in sessionStorage) return false;
   else if(storageAvailable("localStorage") && "mobile" in localStorage) return true;
-  
+  if(typeof window.orientation !== 'undefined') return true;
   mobile = ['iphone','ipad','android','blackberry','nokia','opera mini','windows mobile','windows phone','iemobile','tablet','mobi']; 
   var ua = navigator.userAgent.toLowerCase();
   for (var i in mobile) if(ua.indexOf(mobile[i]) > -1) return true;

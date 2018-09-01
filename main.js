@@ -74,8 +74,19 @@ var scrollAPI = (function() {
       config.target.style.touchAction = "";
     }
   },
-  self.barWidth = function() {
-    return window.innerWidth - document.documentElement.offsetWidth;
+  self.barWidthY = function() {
+    if(config.target === document.documentElement) {
+      return window.innerWidth - document.documentElement.clientWidth;
+    } else {
+      return config.target.offsetWidth - config.target.clientWidth;
+    }
+  },
+  self.barWidthX = function() {
+    if(config.target === document.documentElement) {
+      return window.innerHeight - document.documentElement.clientHeight;
+    } else {
+      return config.target.offsetHeight - config.target.clientHeight;
+    }
   },
   self.scrollTo = function(el, marge) {
     marge = typeof marge === "undefined" ? 0 : marge;
@@ -110,7 +121,7 @@ var scrollAPI = (function() {
     if(config.target == document.documentElement) {
       if(doc.clientWidth + doc.scrollLeft <= mouseX) return true;
     } else {
-      if(doc.clientWidth <= mouseX && mouseX < doc.clientWidth + scrollAPI.barWidth()) return true;
+      if(doc.clientWidth <= mouseX && mouseX < doc.clientWidth + scrollAPI.barWidthY()) return true;
     }
     return false;
   },
@@ -119,7 +130,7 @@ var scrollAPI = (function() {
     if(config.target == document.documentElement) {
       if(doc.clientHeight + doc.scrollTop <= mouseY) return true;
     } else {
-      if(doc.clientHeight <= mouseY && mouseY < doc.clientHeight + scrollAPI.barWidth()) return true;
+      if(doc.clientHeight <= mouseY && mouseY < doc.clientHeight + scrollAPI.barWidthX()) return true;
     }
     return false;
   },

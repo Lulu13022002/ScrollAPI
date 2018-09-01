@@ -17,7 +17,7 @@ var scrollAPI = (function() {
       return;
     }
     api.config(opt);
-    if(config.target != null) {
+    if(config.target !== "undefined") {
       if(typeof config.target !== "object") {
         console.error("config.target must be an htmlelement");
         return;
@@ -39,9 +39,6 @@ var scrollAPI = (function() {
             scrollBar.y = window.pageYOffset;
           }
         });
-      } else {
-        console.error("config.scroll is null");
-        return;
       }
     } else {
       console.error("config.target is null");

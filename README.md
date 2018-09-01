@@ -22,7 +22,7 @@ A simple scroll api for a website
     scrollAPI.init({
       target: document.documentElement, //target
       scroll: -70 //scroll to the target with a marge of -70
-     }
+    }),
     console.log(scrollAPI.isEnable());
     console.log(scrollAPI.barWidth());
     console.log(scrollAPI.isScrollable()); //html element

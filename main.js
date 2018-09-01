@@ -99,8 +99,7 @@ var scrollAPI = (function() {
     return false;
   },
   self.isScrollable = function() {
-    var e = config.target;
-    return e.scrollWidth > e.clientWidth || e.scrollHeight > e.clientHeight;
+    return api.isScrollable(config.target);
   },
   api.config = function(opt) {
     if(opt.length !== 0) {
@@ -151,18 +150,18 @@ var scrollAPI = (function() {
       if(e.button == 1) e.preventDefault();
     }
   },
-  api.body = function(e) {
-    return e == document || e == document.documentElement;
+  api.isScrollable = function(e) {
+    return e.scrollWidth > e.clientWidth || e.scrollHeight > e.clientHeight;
   },
   api.bodyScroll = function(e) {
     if(e == config.target) {
       return true;
-    } else if(!scrollAPI.isScrollable(e)) {
+    } else if(!api.isScrollable(e)) {
       var c = e;
-      while(c.parentNode != null && !scrollAPI.isScrollable(c)) {
+      while(c.parentNode != null && !api.isScrollable(c)) {
         c = c.parentNode;
       }
-      if(api.body(c)) {
+      if(c == config.target) {
         return true;
       } else {
         return false;

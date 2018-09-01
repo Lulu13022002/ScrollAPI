@@ -17,7 +17,7 @@ var scrollAPI = (function() {
       return;
     }
     api.config(opt);
-    if(config.target !== "undefined") {
+    if(config.target != null) {
       if(typeof config.target !== "object") {
         console.error("config.target must be an htmlelement");
         return;

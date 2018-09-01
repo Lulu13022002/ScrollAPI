@@ -57,8 +57,8 @@ var scrollAPI = (function() {
       api.addEventListener("mousewheel", api.preventDefault);
       api.addEventListener("mousedown", api.preventMiddleScroll);
     } else {
-      document.documentElement.style.overflow = "hidden";
-      document.documentElement.style.touchAction = "none";
+      config.target.style.overflow = "hidden";
+      config.target.style.touchAction = "none";
     }
   },
   self.enable = function() {
@@ -70,8 +70,8 @@ var scrollAPI = (function() {
       api.removeEventListener("mousewheel", api.preventDefault);
       api.removeEventListener("mousedown", api.preventMiddleScroll);
     } else {
-      document.documentElement.style.overflow = "";
-      document.documentElement.style.touchAction = "";
+      config.target.style.overflow = "";
+      config.target.style.touchAction = "";
     }
   },
   self.barWidth = function() {

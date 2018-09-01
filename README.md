@@ -31,9 +31,9 @@ A simple scroll api for a website
       scrollAPI.enable();
     }, 1000); //1000 == 1s
     document.addEventListener("mousedown", function(e) {
-      console.log("right bar: " + scrollAPI.clickedOnBarY(e.offsetX));
-      console.log("bottom bar: " + scrollAPI.clickedOnBarX(e.offsetY));
-      console.log("bottom/right bar: " + scrollAPI.clickedOnBar(e.offsetX, e.offsetY));
+      console.log("right bar: " + scrollAPI.clickedOnBar({Y: e.offsetX}));
+      console.log("bottom bar: " + scrollAPI.clickedOnBar({X: e.offsetY}));
+      console.log("bottom/right bar: " + scrollAPI.clickedOnBar({Y: e.offsetX, X: e.offsetY}));
     }, false);
   });
   ```

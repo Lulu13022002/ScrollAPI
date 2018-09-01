@@ -1,25 +1,31 @@
-# ScrollAPI
-A simple scroll api for a website only for body element
+# ScrollAPI v1.0
+A simple scroll api for a website
 
 ### Installation
   copy and paste the main.js and add `<script src="/main.js"></script> in the html file`
   
 ### Usage of functions
+  * scroll.init(config) : [void] init the api
   * scrollAPI.isEnable() : [boolean] check if the scrollbar is enable
+  * scrollAPI.scrollTo(el, marge) : [void] scroll to the element defined with a marge
   * scrollAPI.enable() : [void] enable the scrollbar
   * scrollAPI.disable() : [void] disable the scrollbar
   * scrollAPI.barWidth() : [number] get the width of scrollbar
-  * scrollAPI.clickedOnBarY(mouseX) : [boolean] check if the user has clicked on the scrollbar at right
-  * scrollAPI.clickedOnBarX(mouseY) : [boolean] check if the user has clicked on the scrollbar at bottom
-  * scrollAPI.clickedOnBar(mouseX, mouseY) : [boolean] clickedOnBarY() || clickedOnBarX
-  * scrollAPI.isScrollable(element) : [boolean] check if the element is scrollable
+  * scrollAPI.clickedOnBar({Y: mouseX}) : [boolean] check if the user has clicked on the scrollbar at right
+  * scrollAPI.clickedOnBar({X: mouseY}) : [boolean] check if the user has clicked on the scrollbar at bottom
+  * scrollAPI.clickedOnBar({Y: mouseX, X: mouseY}) : [boolean] clickedOnBarY() || clickedOnBarX()
+  * scrollAPI.isScrollable() : [boolean] check if the element is scrollable
   
 ### Examples
   ```javascript
   window.addEventListener("load", function() {
+    scrollAPI.init({
+      target: document.documentElement, //target
+      scroll: -70 //scroll to the target with a marge of -70
+     }
     console.log(scrollAPI.isEnable());
     console.log(scrollAPI.barWidth());
-    console.log(scrollAPI.isScrollable(document.documentElement)); //html element
+    console.log(scrollAPI.isScrollable()); //html element
     scrollAPI.disable();
     setTimeout(function() {
       scrollAPI.enable();

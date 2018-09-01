@@ -32,18 +32,18 @@ var scrollAPI = (function() {
             scrollAPI.scrollTo(config.target, config.scroll);
           });
         });
-        api.addEventListener("scroll", function(e) {
-          if(scrollBar.scroll) {
-            /* IE Browser */
-            scrollBar.x = window.pageXOffset;
-            scrollBar.y = window.pageYOffset;
-          }
-        });
       }
     } else {
       console.error("config.target is null");
       return;
     }
+    api.addEventListener("scroll", function(e) {
+      if(scrollBar.scroll) {
+        /* IE Browser */
+        scrollBar.x = window.pageXOffset;
+        scrollBar.y = window.pageYOffset;
+      }
+    });
   },
   self.isEnable = function() {
     return scrollBar.scroll;
@@ -180,8 +180,15 @@ var scrollAPI = (function() {
       e.returnValue = false;
     }
   },
+  api.equals = function(e) {
+    if(config.target === document.documentElement) {
+      return e === document.documentElement || e === document;
+    } else {
+      return e === config.target;
+    }
+  },
   api.resetBar = function(e) {
-    if(e.target == config.target) {
+    if(api.equals(e.target)) {
       config.target.scroll(scrollBar.x, scrollBar.y);
     }
   }

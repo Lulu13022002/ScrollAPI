@@ -15,7 +15,7 @@ A simple scroll api for a website
   * scrollAPI.clickedOnBar({Y: mouseX}) : [boolean] check if the user has clicked on the scrollbar at right
   * scrollAPI.clickedOnBar({X: mouseY}) : [boolean] check if the user has clicked on the scrollbar at bottom
   * scrollAPI.clickedOnBar({Y: mouseX, X: mouseY}) : [boolean] clickedOnBarY() || clickedOnBarX()
-  * scrollAPI.isScrollable() : [boolean] check if the element is scrollable
+  * scrollAPI.isScrollable([target]) : [boolean] check if the element is scrollable
   
 ### Examples
   ```javascript
@@ -27,6 +27,7 @@ A simple scroll api for a website
     console.log(scrollAPI.isEnable());
     console.log(scrollAPI.barWidthY());
     console.log(scrollAPI.isScrollable()); //html element
+    console.log(scrollAPI.isScrollable(document.body)); //body element
     scrollAPI.disable();
     setTimeout(function() {
       scrollAPI.enable();

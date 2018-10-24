@@ -27,6 +27,23 @@ function isMobile() {
   return false;
 }
 
+/* polyfill for IE and older browsers */
+(function() {
+  if(!Event.prototype.preventDefault) {
+    console.warn("Implement preventDefault function!");
+    Event.prototype.preventDefault = function() {
+     this.returnValue = false;
+    };
+  }
+
+  if(!Event.prototype.stopPropagation) {
+    console.warn("Implement stopPropagation function!");
+    Event.prototype.stopPropagation = function() {
+     this.cancelBubble = true;
+    };
+  }
+})();
+
 var scrollAPI = (function() {
   var self = {},
   api = {},
@@ -75,11 +92,10 @@ var scrollAPI = (function() {
   self.disable = function() {
     scrollBar.scroll = false;
     if(!isPhone()) {
-      api.addEventListener('DOMMouseScroll', api.preventDefault);
       api.addEventListener('keydown', api.preventDefaultForScrollKeys);
-      api.addEventListener("scroll", api.resetBar);
-      api.addEventListener("mousewheel", api.preventDefault);
-      api.addEventListener("mousedown", api.preventMiddleScroll);
+      api.addEventListener('scroll', api.resetBar);
+      api.addEventListener(api.firefox() ? 'DOMMouseScroll' : 'mousewheel', api.preventDefault);
+      api.addEventListener('mousedown', api.preventMiddleScroll);
     } else {
       config.target.style.overflow = "hidden";
       config.target.style.touchAction = "none";
@@ -88,11 +104,10 @@ var scrollAPI = (function() {
   self.enable = function() {
     scrollBar.scroll = true;
     if(!isPhone()) {
-      api.removeEventListener('DOMMouseScroll', api.preventDefault);
       api.removeEventListener('keydown', api.preventDefaultForScrollKeys);
-      api.removeEventListener("scroll", api.resetBar);
-      api.removeEventListener("mousewheel", api.preventDefault);
-      api.removeEventListener("mousedown", api.preventMiddleScroll);
+      api.removeEventListener('scroll', api.resetBar);
+      api.removeEventListener(api.firefox() ? 'DOMMouseScroll' : 'mousewheel', api.preventDefault);
+      api.removeEventListener('mousedown', api.preventMiddleScroll);
     } else {
       config.target.style.overflow = "";
       config.target.style.touchAction = "";
@@ -161,6 +176,9 @@ var scrollAPI = (function() {
   api.compatibility = function() {
     return (document.addEventListener || document.attachEvent) && (document.removeEventListener || document.detachEvent);
   },
+  api.firefox = function() {
+    return (/Firefox/i.test(navigator.userAgent));
+  },
   api.addEventListener = function(e, f) {
     var el = config.target == document.documentElement ? document : config.target;
     if (el.addEventListener) {
@@ -211,8 +229,7 @@ var scrollAPI = (function() {
   api.preventDefault = function(e) {
     if(api.bodyScroll(e.target)) {
       e = e || window.event;
-      if (e.preventDefault) e.preventDefault();
-      e.returnValue = false;
+      e.preventDefault();
     }
   },
   api.equals = function(e) {

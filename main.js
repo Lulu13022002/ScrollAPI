@@ -188,8 +188,9 @@ var scrollAPI = (function() {
     }
     return false;
   },
-  self.isScrollable = function() {
-    return api.isScrollable(config.target);
+  self.isScrollable = function(target) {
+    target = typeof target === "undefined" ? config.target : target;
+    return api.isScrollable(target);
   },
   api.config = function(opt) {
     if(opt.length !== 0) {

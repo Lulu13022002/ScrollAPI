@@ -164,18 +164,10 @@ var scrollAPI = (function() {
   },
   self.clickedOnBar = function(opt) {
     opt = opt || {};
-    var s = Object.keys(opt), l = s.length;
-    if(l !== 0) {
-      for(var i = 0; i < l; i++) {
-        var v = s[i].toUpperCase();
-        if(v === 'X' || v === 'Y') {
-          if(api['clickedOnBar' + v](opt[s[i]])) return true;
-        } else {
-          break;
-        }
-      }
-    }
-    return false;
+    var k, keys = Object.keys(opt), n = keys.length;
+    var nopt = {};
+    while (n--, k = keys[n]) nopt[k.toUpperCase()] = opt[k];
+    return (nopt.hasOwnProperty('X') && api.clickedOnBarX(nopt['X'])) || (nopt.hasOwnProperty('Y') && api.clickedOnBarX(nopt['Y']));
   },
   self.isScrollable = function(target) {
     target = typeof target === "undefined" ? config.target : target;

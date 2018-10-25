@@ -100,7 +100,7 @@ var scrollAPI = (function() {
     api.config(opt);
     if(!api.isInDOM(config.target)) throw new TypeError('[ScrollAPI] config.target must be an htmlelement');
     var Pscroll = parseInt(config.scroll);
-    if("scroll" in config && !Pscroll){
+    if(config.hasOwnProperty('scroll') && !Pscroll){
       if(Pscroll === 0) throw new TypeError('[ScrollAPI] config.scroll is useless');
       else throw new TypeError('[ScrollAPI] config.scroll must be a number');
     }

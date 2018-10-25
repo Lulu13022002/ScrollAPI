@@ -96,31 +96,19 @@ var scrollAPI = (function() {
   var scrollBar = {x: 0, y: 0, scroll: true};
   self.init = function(opt) {
     opt = opt || {};
-    if (!api.compatibility()) {
-      console.error("Please update your navigator");
-      return;
-    }
+    if (!api.compatibility()) throw new EvalError('[ScrollAPI] Please update your navigator');
     api.config(opt);
     if(config.target != null) {
-      if(typeof config.target !== "object") {
-        console.error("config.target must be an htmlelement");
-        return;
-      }
+      if(typeof config.target !== "object") throw new TypeError('[ScrollAPI] config.target must be an htmlelement');
       if(config.scroll != null) {
-        if(typeof config.scroll !== "number") {
-          console.error("config.scroll must be a number");
-          return;
-        }
+        if(typeof config.scroll !== "number") throw new TypeError('[ScrollAPI] config.scroll must be a number');
         window.addEventListener("load", function() {
           setTimeout(function() {
             scrollAPI.scrollTo(config.target, config.scroll);
           });
         });
       }
-    } else {
-      console.error("config.target is null");
-      return;
-    }
+    } else throw new SyntaxError('[ScrollAPI] config.target is null');
     api.addEventListener("scroll", function(e) {
       if(scrollBar.scroll) {
         /* IE Browser */

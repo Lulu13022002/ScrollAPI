@@ -167,8 +167,9 @@ var scrollAPI = (function() {
     var s = Object.keys(opt), l = s.length;
     if(l !== 0) {
       for(var i = 0; i < l; i++) {
-        if(s[i] === 'X' || s[i] === 'Y') {
-          if(api['clickedOnBar' + s[i]](opt[s[i]])) return true;
+        var v = s[i].toUpperCase();
+        if(v === 'X' || v === 'Y') {
+          if(api['clickedOnBar' + v](opt[s[i]])) return true;
         } else {
           break;
         }

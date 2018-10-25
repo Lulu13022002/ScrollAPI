@@ -102,7 +102,7 @@ var scrollAPI = (function() {
     if(isNaN(config.scroll) || config.scroll == null) throw new TypeError('[ScrollAPI] config.scroll must be a number');
     window.addEventListener("load", function() {
       setTimeout(function() {
-        scrollAPI.scrollTo(config.target, config.scroll);
+        scrollAPI.scrollTo(config.target, parseInt(config.scroll));
       });
     });
     api.addEventListener("scroll", function(e) {

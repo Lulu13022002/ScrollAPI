@@ -184,7 +184,7 @@ var scrollAPI = (function() {
   api.config = function(opt) {
     if(opt.length !== 0) {
       for(var i in opt) {
-        config[i] = opt[i];
+        config[i.toLowerCase()] = opt[i];
       }
     }
   },

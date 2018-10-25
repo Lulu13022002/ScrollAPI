@@ -98,11 +98,14 @@ var scrollAPI = (function() {
     opt = opt || {};
     if (!api.compatibility()) throw new EvalError('[ScrollAPI] Please update your navigator');
     api.config(opt);
-    if(!api.isInDOM(config.target)) throw new TypeError('[ScrollAPI] config.target must be an htmlelement');
-    if(!parseInt(config.scroll) && config.scroll !== undefined) throw new TypeError('[ScrollAPI] config.scroll must be a number');
+    var Pscroll = parseInt(config.scroll);
+    if("scroll" in config && !Pscroll){
+      if(Pscroll === 0) throw new TypeError('[ScrollAPI] config.scroll is useless');
+      else throw new TypeError('[ScrollAPI] config.scroll must be a number');
+    }
     window.addEventListener("load", function() {
       setTimeout(function() {
-        scrollAPI.scrollTo(config.target, parseInt(config.scroll));
+        scrollAPI.scrollTo(config.target, Pscroll);
       });
     });
     api.addEventListener("scroll", function(e) {

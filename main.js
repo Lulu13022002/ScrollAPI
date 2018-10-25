@@ -236,27 +236,23 @@ var scrollAPI = (function() {
       return true;
     } else if(!api.isScrollable(e)) {
       var c = e;
-      while(c.parentNode != null && !api.isScrollable(c)) {
+      while(c.parentNode != null && !api.isScrollable(c))
         c = c.parentNode;
-      }
-      if(c == config.target) {
-        return true;
-      } else {
-        return false;
-      }
+      return c == config.target;
     }
     return false;
   },
   api.preventDefaultForScrollKeys = function(e) {
     var keys = {37: 1, 38: 1, 39: 1, 40: 1, 32: 1};
-    if (keys[e.keyCode]) {
+    var keyCode = e.keyCode || e.which;
+    if (keys[keyCode]) {
       api.preventDefault(e);
       return false;
     }
   },
   api.preventDefault = function(e) {
+    e = e || window.event;
     if(api.bodyScroll(e.target)) {
-      e = e || window.event;
       e.preventDefault();
     }
   },

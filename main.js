@@ -98,17 +98,13 @@ var scrollAPI = (function() {
     opt = opt || {};
     if (!api.compatibility()) throw new EvalError('[ScrollAPI] Please update your navigator');
     api.config(opt);
-    if(config.target != null) {
-      if(typeof config.target !== "object") throw new TypeError('[ScrollAPI] config.target must be an htmlelement');
-      if(config.scroll != null) {
-        if(typeof config.scroll !== "number") throw new TypeError('[ScrollAPI] config.scroll must be a number');
-        window.addEventListener("load", function() {
-          setTimeout(function() {
-            scrollAPI.scrollTo(config.target, config.scroll);
-          });
-        });
-      }
-    } else throw new SyntaxError('[ScrollAPI] config.target is null');
+    if(!isInDOM(config.target)) throw new TypeError('[ScrollAPI] config.target must be an htmlelement');
+    if(isNaN(config.scroll) || config.scroll == null) throw new TypeError('[ScrollAPI] config.scroll must be a number');
+    window.addEventListener("load", function() {
+      setTimeout(function() {
+        scrollAPI.scrollTo(config.target, config.scroll);
+      });
+    });
     api.addEventListener("scroll", function(e) {
       if(scrollBar.scroll) {
         /* IE Browser */
@@ -215,6 +211,9 @@ var scrollAPI = (function() {
     } else if (el.attachEvent) {
       el.attachEvent(e, f);
     }
+  },
+  api.isInDOM = function(target) {
+    return (target !== undefined) && (target !== null) && !!target.ownerDocument && (window === (target.ownerDocument.defaultView || target.ownerDocument.parentWindow));
   },
   api.removeEventListener = function(e, f) {
     var el = config.target == document.documentElement ? document : config.target;

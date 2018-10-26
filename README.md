@@ -5,7 +5,7 @@ A simple scroll api for a website
   copy and paste the main.js and add `<script src="/main.js"></script> in the html file`
   
 ### Usage of functions
-  * scroll.init(config) : [void] init the api
+  * scroll.init([config]) : [void] init the api (if the config is empty, target is document.documentElement)
   * scrollAPI.isEnable() : [boolean] check if the scrollbar is enable
   * scrollAPI.scrollTo(el, marge) : [void] scroll to the element defined with a marge
   * scrollAPI.enable() : [void] enable the scrollbar

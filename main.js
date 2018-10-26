@@ -42,7 +42,7 @@ function isMobile() {
      this.cancelBubble = true;
     };
   }
-  
+
   if(!Object.keys) {
     console.warn("Implement keys function!");
     Object.keys = function() {
@@ -97,8 +97,9 @@ var scrollAPI = (function() {
   self.init = function(opt) {
     opt = opt || {};
     if (!api.compatibility()) throw new EvalError('[ScrollAPI] Please update your navigator');
+    if(!opt.hasOwnProperty('target')) throw new TypeError('[ScrollAPI] config.target must be defined');
+    if(!api.isInDOM(opt.target)) throw new TypeError('[ScrollAPI] config.target must be an htmlelement');
     api.config(opt);
-    if(!api.isInDOM(config.target)) throw new TypeError('[ScrollAPI] config.target must be an htmlelement');
     var Pscroll = parseInt(config.scroll);
     if(config.hasOwnProperty('scroll') && !Pscroll){
       if(Pscroll === 0) throw new TypeError('[ScrollAPI] config.scroll is useless');
@@ -164,21 +165,20 @@ var scrollAPI = (function() {
   },
   self.clickedOnBar = function(opt) {
     opt = opt || {};
-    var k, keys = Object.keys(opt), n = keys.length;
-    var nopt = {};
-    while (n--, k = keys[n]) nopt[k.toUpperCase()] = opt[k];
-    return (nopt.hasOwnProperty('X') && api.clickedOnBarX(nopt['X'])) || (nopt.hasOwnProperty('Y') && api.clickedOnBarX(nopt['Y']));
+    if(typeof opt === 'object' && Object.keys(opt).length) {
+      var nopt = {};
+      for(var i in opt) nopt[i.toUpperCase()] = opt[i];
+      return (nopt.hasOwnProperty('X') && api.clickedOnBarX(nopt['X'])) || (nopt.hasOwnProperty('Y') && api.clickedOnBarX(nopt['Y']));
+    } else throw new TypeError('[ScrollAPI] clickedOnBar must have an object');
   },
   self.isScrollable = function(target) {
     target = typeof target === "undefined" ? config.target : target;
     return api.isScrollable(target);
   },
   api.config = function(opt) {
-    if(opt.length !== 0) {
-      for(var i in opt) {
-        config[i.toLowerCase()] = opt[i];
-      }
-    }
+    if(typeof opt === 'object' && Object.keys(opt).length) {
+      for(var i in opt) config[i.toLowerCase()] = opt[i];
+    } else throw new TypeError('[ScrollAPI] config must be an object');
   },
   api.clickedOnBarY = function(mouseX) {
     var doc = config.target;

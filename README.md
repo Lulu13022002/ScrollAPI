@@ -10,8 +10,8 @@ A simple scroll api for a website
   * scrollAPI.scrollTo(el, marge) : [void] scroll to the element defined with a marge
   * scrollAPI.enable() : [void] enable the scrollbar
   * scrollAPI.disable() : [void] disable the scrollbar
-  * scrollAPI.barWidthY() : [number] get the width of scrollbar at right
-  * scrollAPI.barWidthX() : [number] get the width of scrollbar at bottom
+  * scrollAPI.barWidthY([target]) : [number] get the width of scrollbar at right
+  * scrollAPI.barWidthX([target]) : [number] get the width of scrollbar at bottom
   * scrollAPI.clickedOnBar({Y: mouseX}) : [boolean] check if the user has clicked on the scrollbar at right
   * scrollAPI.clickedOnBar({X: mouseY}) : [boolean] check if the user has clicked on the scrollbar at bottom
   * scrollAPI.clickedOnBar({Y: mouseX, X: mouseY}) : [boolean] clickedOnBarY() || clickedOnBarX()

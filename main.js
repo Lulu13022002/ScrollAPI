@@ -43,47 +43,13 @@ function isMobile() {
     };
   }
 
-  if(!Object.keys) {
-    console.warn("Implement keys function!");
-    Object.keys = function() {
-      'use strict';
-      var hasOwnProperty = Object.prototype.hasOwnProperty,
-        hasDontEnumBug = !({ toString: null }).propertyIsEnumerable('toString'),
-        dontEnums = [
-          'toString',
-          'toLocaleString',
-          'valueOf',
-          'hasOwnProperty',
-          'isPrototypeOf',
-          'propertyIsEnumerable',
-          'constructor'
-        ],
-        dontEnumsLength = dontEnums.length;
-
-      return function(obj) {
-        if (typeof obj !== 'function' && (typeof obj !== 'object' || obj === null)) {
-          throw new TypeError('Object.keys called on non-object');
-        }
-
-        var result = [], prop, i;
-
-        for (prop in obj) {
-          if (hasOwnProperty.call(obj, prop)) {
-            result.push(prop);
-          }
-        }
-
-        if (hasDontEnumBug) {
-          for (i = 0; i < dontEnumsLength; i++) {
-            if (hasOwnProperty.call(obj, dontEnums[i])) {
-              result.push(dontEnums[i]);
-            }
-          }
-        }
-        return result;
-      };
+  Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
     }
-  }
+    return size;
+  };
 })();
 
 var scrollAPI = (function() {
@@ -97,9 +63,9 @@ var scrollAPI = (function() {
   self.init = function(opt) {
     opt = opt || {};
     if (!api.compatibility()) throw new EvalError('[ScrollAPI] Please update your navigator');
-    if(!opt.hasOwnProperty('target')) throw new TypeError('[ScrollAPI] config.target must be defined');
-    if(!api.isInDOM(opt.target)) throw new TypeError('[ScrollAPI] config.target must be an htmlelement');
     api.config(opt);
+    if(!config.hasOwnProperty('target')) throw new ReferenceError('[ScrollAPI] config.target is not defined');
+    if(!api.isInDOM(config.target)) throw new TypeError('[ScrollAPI] config.target must be an htmlelement');
     var Pscroll = parseInt(config.scroll);
     if(config.hasOwnProperty('scroll') && !Pscroll){
       if(Pscroll === 0) throw new TypeError('[ScrollAPI] config.scroll is useless');
@@ -145,18 +111,20 @@ var scrollAPI = (function() {
       config.target.style.touchAction = "";
     }
   },
-  self.barWidthY = function() {
-    if(config.target === document.documentElement) {
+  self.barWidthY = function(target) {
+    target = typeof target === "undefined" ? config.target : target;
+    if(api.global(target)) {
       return window.innerWidth - document.documentElement.clientWidth;
     } else {
-      return config.target.offsetWidth - config.target.clientWidth;
+      return target.offsetWidth - target.clientWidth;
     }
   },
-  self.barWidthX = function() {
-    if(config.target === document.documentElement) {
+  self.barWidthX = function(target) {
+    target = typeof target === "undefined" ? config.target : target;
+    if(api.global(target)) {
       return window.innerHeight - document.documentElement.clientHeight;
     } else {
-      return config.target.offsetHeight - config.target.clientHeight;
+      return target.offsetHeight - target.clientHeight;
     }
   },
   self.scrollTo = function(el, marge) {
@@ -165,24 +133,24 @@ var scrollAPI = (function() {
   },
   self.clickedOnBar = function(opt) {
     opt = opt || {};
-    if(typeof opt === 'object' && Object.keys(opt).length) {
+    if(typeof opt === 'object' && Object.size(opt)) {
       var nopt = {};
       for(var i in opt) nopt[i.toUpperCase()] = opt[i];
-      return (nopt.hasOwnProperty('X') && api.clickedOnBarX(nopt['X'])) || (nopt.hasOwnProperty('Y') && api.clickedOnBarX(nopt['Y']));
-    } else throw new TypeError('[ScrollAPI] clickedOnBar must have an object');
+      return (nopt.hasOwnProperty('Y') && api.clickedOnBarY(nopt['Y'])) || (nopt.hasOwnProperty('X') && api.clickedOnBarX(nopt['X']));
+    } else throw new TypeError('[ScrollAPI] clickedOnBar must have an object not empty');
   },
   self.isScrollable = function(target) {
     target = typeof target === "undefined" ? config.target : target;
     return api.isScrollable(target);
   },
   api.config = function(opt) {
-    if(typeof opt === 'object' && Object.keys(opt).length) {
+    if(typeof opt === 'object' && Object.size(opt)) {
       for(var i in opt) config[i.toLowerCase()] = opt[i];
-    } else throw new TypeError('[ScrollAPI] config must be an object');
+    } else throw new TypeError('[ScrollAPI] config must be an object not empty');
   },
   api.clickedOnBarY = function(mouseX) {
     var doc = config.target;
-    if(config.target == document.documentElement) {
+    if(doc == document.documentElement) {
       if(doc.clientWidth + doc.scrollLeft <= mouseX) return true;
     } else {
       if(doc.clientWidth <= mouseX && mouseX < doc.clientWidth + scrollAPI.barWidthY()) return true;
@@ -191,7 +159,7 @@ var scrollAPI = (function() {
   },
   api.clickedOnBarX = function(mouseY) {
     var doc = config.target;
-    if(config.target == document.documentElement) {
+    if(doc == document.documentElement) {
       if(doc.clientHeight + doc.scrollTop <= mouseY) return true;
     } else {
       if(doc.clientHeight <= mouseY && mouseY < doc.clientHeight + scrollAPI.barWidthX()) return true;
@@ -260,6 +228,9 @@ var scrollAPI = (function() {
       return e === config.target;
     }
   },
+  api.global = function(e) {
+    return e === document.documentElement || e === document || e === window;
+  }
   api.resetBar = function(e) {
     if(api.equals(e.target)) {
       config.target.scroll(scrollBar.x, scrollBar.y);

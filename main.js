@@ -146,7 +146,7 @@ var scrollAPI = (function() {
   api.config = function(opt) {
     if(typeof opt === 'object' && Object.size(opt)) {
       for(var i in opt) config[i.toLowerCase()] = opt[i];
-    } else throw new TypeError('[ScrollAPI] config must be an object not empty');
+    }
   },
   api.clickedOnBarY = function(mouseX) {
     var doc = config.target;

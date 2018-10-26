@@ -230,7 +230,7 @@ var scrollAPI = (function() {
   },
   api.global = function(e) {
     return e === document.documentElement || e === document || e === window;
-  }
+  },
   api.resetBar = function(e) {
     if(api.equals(e.target)) {
       config.target.scroll(scrollBar.x, scrollBar.y);

@@ -14,7 +14,7 @@ A simple scroll api for a website
   * scrollAPI.barWidthX([target]) : [number] get the width of scrollbar at bottom
   * scrollAPI.clickedOnBarY(x, y[, e]) : [boolean] check if the user has clicked on the scrollbar at right
   * scrollAPI.clickedOnBarX(x, y[, e]) : [boolean] check if the user has clicked on the scrollbar at bottom
-  * scrollAPI.clickedOnBar(x, y[, e]) : [boolean] clickedOnBarY() || clickedOnBarX() (e is necessary only for target not 
+  * scrollAPI.clickedOnBar(x, y[, e]) : [boolean] clickedOnBarY() || clickedOnBarX() 
   Note: e is not needed if the target is document.body or document.documentElement
   * scrollAPI.isScrollable([target]) : [boolean] check if the element is scrollable
   

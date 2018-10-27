@@ -62,20 +62,20 @@ var scrollAPI = (function() {
   var scrollBar = {x: 0, y: 0, scroll: true};
   self.init = function(opt) {
     opt = opt || {};
-    if (!api.compatibility()) throw new EvalError('[ScrollAPI] Please update your navigator');
+    if (!api.compatibility()) throw new EvalError('[ScrollAPI] Please update your navigator [' + navigator.userAgent + ']');
     api.config(opt);
     if(!config.hasOwnProperty('target')) throw new ReferenceError('[ScrollAPI] config.target is not defined');
-    if(!api.isInDOM(config.target)) throw new TypeError('[ScrollAPI] config.target must be an htmlelement');
+    if(!api.isInDOM(config.target)) throw new TypeError('[ScrollAPI] ' + config.target + ' is not an htmlelement');
     var Pscroll = parseInt(config.scroll);
     if(config.hasOwnProperty('scroll') && !Pscroll){
-      if(Pscroll === 0) throw new TypeError('[ScrollAPI] config.scroll is useless');
-      else throw new TypeError('[ScrollAPI] config.scroll must be a number');
-    }
-    window.addEventListener("load", function() {
-      setTimeout(function() {
-        scrollAPI.scrollTo(config.target, Pscroll);
+      if(Pscroll === 0) throw new TypeError('[ScrollAPI] 0 is useless');
+      else throw new TypeError('[ScrollAPI] ' + config.scroll + ' is not a number');
+      window.addEventListener("load", function() {
+        setTimeout(function() {
+          scrollAPI.scrollTo(config.target, Pscroll);
+        });
       });
-    });
+    }
     api.addEventListener("scroll", function(e) {
       if(scrollBar.scroll) {
         /* IE Browser */
@@ -91,11 +91,12 @@ var scrollAPI = (function() {
     scrollBar.scroll = false;
     if(!isPhone()) {
       api.addEventListener('keydown', api.preventDefaultForScrollKeys);
+      api.addEventListener('keypress', api.preventDefaultForScrollKeys);
       api.addEventListener('scroll', api.resetBar);
       api.addEventListener(mousewheel, api.preventDefault);
       api.addEventListener('mousedown', api.preventMiddleScroll);
     } else {
-      config.target.style.overflow = "hidden";
+      config.target.style.overflow = "hidden"; /* Disable scroll for mobile in inspector pc */
       config.target.style.touchAction = "none";
     }
   },
@@ -103,6 +104,7 @@ var scrollAPI = (function() {
     scrollBar.scroll = true;
     if(!isPhone()) {
       api.removeEventListener('keydown', api.preventDefaultForScrollKeys);
+      api.removeEventListener('keypress', api.preventDefaultForScrollKeys);
       api.removeEventListener('scroll', api.resetBar);
       api.removeEventListener(mousewheel, api.preventDefault);
       api.removeEventListener('mousedown', api.preventMiddleScroll);
@@ -112,32 +114,51 @@ var scrollAPI = (function() {
     }
   },
   self.barWidthY = function(target) {
-    target = typeof target === "undefined" ? config.target : target;
-    if(api.global(target)) {
+    target = target || config.target;
+    if(!api.isInDOM(target)) throw new TypeError('[ScrollAPI] ' + target + ' is not an HTMLElement');
+    if(api.window(target)) {
       return window.innerWidth - document.documentElement.clientWidth;
     } else {
       return target.offsetWidth - target.clientWidth;
     }
   },
-  self.barWidthX = function(target) {
-    target = typeof target === "undefined" ? config.target : target;
-    if(api.global(target)) {
+  self.barHeightX = function(target) {
+    target = target || config.target;
+    if(!api.isInDOM(target)) throw new TypeError('[ScrollAPI] ' + target + ' is not an HTMLElement');
+    if(api.window(target)) {
       return window.innerHeight - document.documentElement.clientHeight;
     } else {
       return target.offsetHeight - target.clientHeight;
     }
   },
   self.scrollTo = function(el, marge) {
-    marge = typeof marge === "undefined" ? 0 : marge;
+    marge = marge || 0;
     window.scroll(0, el.offsetTop + marge);
   },
-  self.clickedOnBar = function(opt) {
-    opt = opt || {};
-    if(typeof opt === 'object' && Object.size(opt)) {
-      var nopt = {};
-      for(var i in opt) nopt[i.toUpperCase()] = opt[i];
-      return (nopt.hasOwnProperty('Y') && api.clickedOnBarY(nopt['Y'])) || (nopt.hasOwnProperty('X') && api.clickedOnBarX(nopt['X']));
-    } else throw new TypeError('[ScrollAPI] clickedOnBar must have an object not empty');
+  self.clickedOnBar = function(x, y, e) {
+    if(api.window()) {
+      return self.clickedOnBarY(x, y) || self.clickedOnBarX(x, y);
+    } else {
+      return (typeof e.target !== "undefined" && e.target == config.target) && (self.clickedOnBarY(x, y, e) || self.clickedOnBarX(x, y, e));
+    }
+  },
+  self.clickedOnBarY = function(x, y, e) {
+    var doc = config.target;
+    if(api.window()) {
+      return document.documentElement.clientWidth + document.documentElement.scrollLeft <= x && y - document.documentElement.scrollTop < document.documentElement.clientHeight;
+    } else {
+      return doc.clientWidth <= x && x < doc.clientWidth + scrollAPI.barWidthY() && y < doc.clientHeight && typeof e.target !== "undefined" && e.target === config.target;
+    }
+    return false;
+  },
+  self.clickedOnBarX = function(x, y, e) {
+    var doc = config.target;
+    if(api.window()) {
+      return document.documentElement.clientHeight + document.documentElement.scrollTop <= y && x - document.documentElement.scrollLeft < document.documentElement.clientWidth;
+    } else {
+      return doc.clientHeight <= y && y < doc.clientHeight + scrollAPI.barHeightX() && x < doc.clientWidth && typeof e.target !== "undefined" && e.target === config.target;
+    }
+    return false;
   },
   self.isScrollable = function(target) {
     target = typeof target === "undefined" ? config.target : target;
@@ -148,40 +169,22 @@ var scrollAPI = (function() {
       for(var i in opt) config[i.toLowerCase()] = opt[i];
     }
   },
-  api.clickedOnBarY = function(mouseX) {
-    var doc = config.target;
-    if(doc == document.documentElement) {
-      if(doc.clientWidth + doc.scrollLeft <= mouseX) return true;
-    } else {
-      if(doc.clientWidth <= mouseX && mouseX < doc.clientWidth + scrollAPI.barWidthY()) return true;
-    }
-    return false;
-  },
-  api.clickedOnBarX = function(mouseY) {
-    var doc = config.target;
-    if(doc == document.documentElement) {
-      if(doc.clientHeight + doc.scrollTop <= mouseY) return true;
-    } else {
-      if(doc.clientHeight <= mouseY && mouseY < doc.clientHeight + scrollAPI.barWidthX()) return true;
-    }
-    return false;
-  },
   api.compatibility = function() {
     return (document.addEventListener || document.attachEvent) && (document.removeEventListener || document.detachEvent);
   },
+  api.isInDOM = function(target) {
+    return (target !== undefined) && (target !== null) && !!target.ownerDocument && (window === (target.ownerDocument.defaultView || target.ownerDocument.parentWindow));
+  },
   api.addEventListener = function(e, f) {
-    var el = config.target == document.documentElement ? document : config.target;
+    var el = api.window() ? document : config.target;
     if (el.addEventListener) {
       el.addEventListener(e, f, false);
     } else if (el.attachEvent) {
       el.attachEvent(e, f);
     }
   },
-  api.isInDOM = function(target) {
-    return (target !== undefined) && (target !== null) && !!target.ownerDocument && (window === (target.ownerDocument.defaultView || target.ownerDocument.parentWindow));
-  },
   api.removeEventListener = function(e, f) {
-    var el = config.target == document.documentElement ? document : config.target;
+    var el = api.window() ? document : config.target;
     if (el.removeEventListener) {
       el.removeEventListener(e, f, false);
     } else if (el.detachEvent) { /* IE Browser 8 */
@@ -189,15 +192,30 @@ var scrollAPI = (function() {
     }
   },
   api.preventMiddleScroll = function(e) {
-    if(api.bodyScroll(e.target)) {
-      if(e.button == 1) e.preventDefault();
+    if(e.button === 1) {
+      api.preventDefault(e);
     }
   },
   api.isScrollable = function(e) {
-    return e.scrollWidth > e.clientWidth || e.scrollHeight > e.clientHeight;
+    var ce = null, cb = null;
+    if(!api.window(e)) {
+      ce = window.getComputedStyle(e);
+      cb = ce;
+    } else {
+      ce = window.getComputedStyle(document.documentElement);
+      cb = window.getComputedStyle(document.body);
+      e = document.documentElement;
+    }
+    var d = e.scrollWidth > e.clientWidth || e.scrollHeight > e.clientHeight;
+    var c = ce.overflow != "hidden" && cb.overflow != "hidden";
+    if(isPhone()) {
+      return (d) && ce.touchAction != "none" && cb.touchAction != "none" && (c);
+    } else {
+      return (d) && (c);
+    }
   },
   api.bodyScroll = function(e) {
-    if(e == config.target) {
+    if(e == config.target || api.window(e)) {
       return true;
     } else if(!api.isScrollable(e)) {
       var c = e;
@@ -210,30 +228,30 @@ var scrollAPI = (function() {
   api.preventDefaultForScrollKeys = function(e) {
     var keys = {37: 1, 38: 1, 39: 1, 40: 1, 32: 1};
     var keyCode = e.keyCode || e.which;
-    if (keys[keyCode]) {
+    if (!e.ctrlKey && keys[keyCode] && e.target == config.target) {
+      if(e.target === document.body) e = {target: document.documentElement};
       api.preventDefault(e);
-      return false;
     }
   },
   api.preventDefault = function(e) {
     e = e || window.event;
-    if(api.bodyScroll(e.target)) {
+    if(api.bodyScroll(e.target))
       e.preventDefault();
-    }
   },
   api.equals = function(e) {
-    if(config.target === document.documentElement) {
-      return e === document.documentElement || e === document;
+    if(api.window()) {
+      return api.window(e) || e === document;
     } else {
       return e === config.target;
     }
   },
-  api.global = function(e) {
-    return e === document.documentElement || e === document || e === window;
+  api.window = function(e) {
+    e = e || config.target;
+    return e === document.documentElement || e === document.body;
   },
   api.resetBar = function(e) {
     if(api.equals(e.target)) {
-      config.target.scroll(scrollBar.x, scrollBar.y);
+      (api.window() ? window : config.target).scroll(scrollBar.x, scrollBar.y);
     }
   }
 

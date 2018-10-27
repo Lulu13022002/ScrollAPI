@@ -64,7 +64,7 @@ A simple scroll api for a website
     scrollAPI.init(); //target = document.documentElement
     /* Some functions work with another target than config.target */
     scrollAPI.scrollTo(document.getElementById('el), 10);
-    console.log(scrollAPI.barWidthY(document.getElementById('el)));
-    console.log(scrollAPI.isScrollable(document.getElementById('el))); //el element
+    console.log(scrollAPI.barWidthY(document.getElementById('el')));
+    console.log(scrollAPI.isScrollable(document.getElementById('el'))); //el element
   });
   ```

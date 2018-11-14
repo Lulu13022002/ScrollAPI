@@ -135,34 +135,51 @@ var scrollAPI = (function() {
     marge = marge || 0;
     window.scroll(0, el.offsetTop + marge);
   },
-  self.clickedOnBar = function(x, y, e) {
-    if(api.window()) {
-      return self.clickedOnBarY(x, y) || self.clickedOnBarX(x, y);
-    } else {
-      return (typeof e.target !== "undefined" && e.target == config.target) && (self.clickedOnBarY(x, y, e) || self.clickedOnBarX(x, y, e));
-    }
+  self.clickedOnBar = function(e, x, y) {
+    var loc = api.pointerEvent(e), x = x || loc.x, y = y || loc.y;
+    return self.clickedOnBarY(e, x, y) || self.clickedOnBarX(e, x, y);
   },
-  self.clickedOnBarY = function(x, y, e) {
+  self.clickedOnBarY = function(e, x, y) {
     var doc = config.target;
+    var loc = api.pointerEvent(e), x = x || loc.x, y = y || loc.y;
     if(api.window()) {
-      return document.documentElement.clientWidth + document.documentElement.scrollLeft <= x && y - document.documentElement.scrollTop < document.documentElement.clientHeight;
+      var de = document.documentElement;
+      return de.clientWidth + de.scrollLeft <= x && y - de.scrollTop < de.clientHeight;
     } else {
-      return doc.clientWidth <= x && x < doc.clientWidth + scrollAPI.barWidthY() && y < doc.clientHeight && typeof e.target !== "undefined" && e.target === config.target;
+      return doc.offsetLeft + doc.clientWidth <= x && y < doc.clientHeight + doc.offsetTop && typeof e.target !== "undefined" && e.target === config.target;
     }
     return false;
   },
-  self.clickedOnBarX = function(x, y, e) {
+  self.clickedOnBarX = function(e, x, y) {
     var doc = config.target;
+    var loc = api.pointerEvent(e), x = x || loc.x, y = y || loc.y;
     if(api.window()) {
-      return document.documentElement.clientHeight + document.documentElement.scrollTop <= y && x - document.documentElement.scrollLeft < document.documentElement.clientWidth;
+      var de = document.documentElement;
+      return de.clientHeight + de.scrollTop <= y && x - de.scrollLeft < de.clientWidth;
     } else {
-      return doc.clientHeight <= y && y < doc.clientHeight + scrollAPI.barHeightX() && x < doc.clientWidth && typeof e.target !== "undefined" && e.target === config.target;
+      return doc.offsetTop + doc.clientHeight <= y && x < doc.clientWidth + doc.offsetLeft && typeof e.target !== "undefined" && e.target === config.target;
     }
     return false;
   },
-  self.isScrollable = function(target) {
-    target = typeof target === "undefined" ? config.target : target;
-    return api.isScrollable(target);
+  self.isScrollable = function(e) {
+    e = e || config.target;
+    if(!api.isInDOM(e)) throw new TypeError('[ScrollAPI] ' + e + ' is not an htmlelement');
+    var ce = null, cb = null;
+    if(!api.window(e)) {
+      ce = window.getComputedStyle(e);
+      cb = ce;
+    } else {
+      ce = window.getComputedStyle(document.documentElement);
+      cb = window.getComputedStyle(document.body);
+      e = document.documentElement;
+    }
+    var d = e.scrollWidth > e.clientWidth || e.scrollHeight > e.clientHeight;
+    var c = ce.overflow != "hidden" && cb.overflow != "hidden";
+    if(isPhone()) {
+      return (d) && ce.touchAction != "none" && cb.touchAction != "none" && (c);
+    } else {
+      return (d) && (c);
+    }
   },
   api.config = function(opt) {
     if(typeof opt === 'object' && Object.size(opt)) {
@@ -196,24 +213,6 @@ var scrollAPI = (function() {
       api.preventDefault(e);
     }
   },
-  api.isScrollable = function(e) {
-    var ce = null, cb = null;
-    if(!api.window(e)) {
-      ce = window.getComputedStyle(e);
-      cb = ce;
-    } else {
-      ce = window.getComputedStyle(document.documentElement);
-      cb = window.getComputedStyle(document.body);
-      e = document.documentElement;
-    }
-    var d = e.scrollWidth > e.clientWidth || e.scrollHeight > e.clientHeight;
-    var c = ce.overflow != "hidden" && cb.overflow != "hidden";
-    if(isPhone()) {
-      return (d) && ce.touchAction != "none" && cb.touchAction != "none" && (c);
-    } else {
-      return (d) && (c);
-    }
-  },
   api.bodyScroll = function(e) {
     if(e == config.target || api.window(e)) {
       return true;
@@ -237,6 +236,32 @@ var scrollAPI = (function() {
     e = e || window.event;
     if(api.bodyScroll(e.target))
       e.preventDefault();
+  }
+  api.preventDefault = function(e) {
+    e = e || window.event;
+    if(api.bodyScroll(e.target))
+      e.preventDefault();
+  }, api.pointerEvent = function(e){
+    var out = {x:0, y:0};
+    if(e.type == 'touchstart' ||
+       e.type == 'touchmove' ||
+       e.type == 'touchend' ||
+       e.type == 'touchcancel'){
+      var touch = e.targetTouches[0] || e.changedTouches[0] || e.touches[0];
+      out.x = touch.pageX;
+      out.y = touch.pageY;
+    } else if (e.type == 'contextmenu' ||
+               e.type == 'mousedown' ||
+               e.type == 'mouseup' ||
+               e.type == 'mousemove' ||
+               e.type == 'mouseover'||
+               e.type == 'mouseout' ||
+               e.type == 'mouseenter' ||
+               e.type == 'mouseleave') {
+      out.x = e.pageX;
+      out.y = e.pageY;
+    }
+    return out;
   },
   api.equals = function(e) {
     if(api.window()) {

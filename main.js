@@ -236,11 +236,6 @@ var scrollAPI = (function() {
     e = e || window.event;
     if(api.bodyScroll(e.target))
       e.preventDefault();
-  }
-  api.preventDefault = function(e) {
-    e = e || window.event;
-    if(api.bodyScroll(e.target))
-      e.preventDefault();
   }, api.pointerEvent = function(e){
     var out = {x:0, y:0};
     if(e.type == 'touchstart' ||

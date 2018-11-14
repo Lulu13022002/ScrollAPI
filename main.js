@@ -65,7 +65,7 @@ var scrollAPI = (function() {
     if (!api.compatibility()) throw new EvalError('[ScrollAPI] Please update your navigator [' + navigator.userAgent + ']');
     api.config(opt);
     if(!config.hasOwnProperty('target')) throw new ReferenceError('[ScrollAPI] config.target is not defined');
-    if(!api.isInDOM(config.target)) throw new TypeError('[ScrollAPI] ' + config.target + ' is not an htmlelement');
+    if(!api.isInDOM(config.target)) throw new TypeError('[ScrollAPI] ' + config.target + ' is not an HTMLElement');
     if(config.hasOwnProperty('scroll')) {
       var Pscroll = parseInt(config.scroll);
       if(isNaN(Pscroll)) throw new TypeError('[ScrollAPI] ' + config.scroll + ' is not a number');

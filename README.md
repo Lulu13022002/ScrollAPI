@@ -7,6 +7,7 @@ A simple scroll api for a website
 ### Usage of functions
   argument => [] = optional
   * scroll.init([config]) : [void] init the api (if the config is empty, target is document.documentElement)
+    config = {target: [HTMLElement], scroll: [number]};
   * scrollAPI.isEnable() : [boolean] check if the scrollbar is enable
   * scrollAPI.scrollTo(el, marge) : [void] scroll to the element defined with a marge
   * scrollAPI.enable() : [void] enable the scrollbar
@@ -51,7 +52,7 @@ A simple scroll api for a website
     setTimeout(function() {
       scrollAPI.enable();
     }, 1000); //1000 == 1s
-    document.addEventListener("mousedown", function(e) {
+    document.getElementById('el').addEventListener("mousedown", function(e) {
       console.log("right bar: " + scrollAPI.clickedOnBarY(e));
       console.log("bottom bar: " + scrollAPI.clickedOnBarX(e));
       console.log("bottom/right bar: " + scrollAPI.clickedOnBar(e));

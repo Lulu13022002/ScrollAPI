@@ -66,10 +66,10 @@ var scrollAPI = (function() {
     api.config(opt);
     if(!config.hasOwnProperty('target')) throw new ReferenceError('[ScrollAPI] config.target is not defined');
     if(!api.isInDOM(config.target)) throw new TypeError('[ScrollAPI] ' + config.target + ' is not an htmlelement');
-    var Pscroll = parseInt(config.scroll);
-    if(config.hasOwnProperty('scroll') && (!Pscroll || typeof Pscroll === 'number')){
+    if(config.hasOwnProperty('scroll')) {
+      var Pscroll = parseInt(config.scroll);
+      if(isNaN(Pscroll)) throw new TypeError('[ScrollAPI] ' + config.scroll + ' is not a number');
       if(Pscroll === 0) throw new TypeError('[ScrollAPI] 0 is useless');
-      else if(typeof Pscroll !== 'number') throw new TypeError('[ScrollAPI] ' + config.scroll + ' is not a number');
       window.addEventListener("load", function() {
         setTimeout(function() {
           scrollAPI.scrollTo(config.target, Pscroll);

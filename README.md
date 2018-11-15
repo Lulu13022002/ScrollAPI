@@ -62,15 +62,18 @@ A simple scroll api for a website
   ```
   
   ```javascript
-  document.addEventListener('scroll', function(e) {
-    console.log('scrolled percent: ' + scrollAPI.percentScroll(document.documentElement) + ' %');
-  });
+  window.addEventListener("load", function() {
+    document.addEventListener('scroll', function() {
+      console.log('scrolled percent: ' + scrollAPI.percentScroll() + ' %');
+    });
+   });
   ```
   
   Static functions
   ```javascript
   window.addEventListener("load", function() {
     scrollAPI.scrollTo(document.getElementById('el'), 10);
+    console.log('scrolled percent: ' + scrollAPI.percentScroll(document.getElementById('el')) + ' %');
     console.log(scrollAPI.barWidthY(document.getElementById('el')));
     console.log(scrollAPI.isScrollable(document.getElementById('el'))); //el element
   });

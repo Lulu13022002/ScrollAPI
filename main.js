@@ -169,9 +169,9 @@ var scrollAPI = (function() {
       ce = window.getComputedStyle(e);
       cb = ce;
     } else {
-      ce = window.getComputedStyle(document.documentElement);
-      cb = window.getComputedStyle(document.body);
       e = document.documentElement;
+      ce = window.getComputedStyle(e);
+      cb = window.getComputedStyle(document.body);
     }
     var d = e.scrollWidth > e.clientWidth || e.scrollHeight > e.clientHeight;
     var c = ce.overflow != "hidden" && cb.overflow != "hidden";
@@ -180,6 +180,13 @@ var scrollAPI = (function() {
     } else {
       return (d) && (c);
     }
+  },
+  self.percentScroll = function(e, round) {
+    e = e || config.target;
+    if(!self.isScrollable(e) || !self.isEnable()) throw new TypeError('[ScrollAPI] ' + e + ' is not scrollable !');
+    round = round || false;
+    var r = (e.scrollTop / (e.scrollHeight - e.clientHeight)) * 100;
+    return round ? Math.round(r) : r;
   },
   api.config = function(opt) {
     if(typeof opt === 'object' && Object.size(opt)) {
@@ -190,7 +197,7 @@ var scrollAPI = (function() {
     return (document.addEventListener || document.attachEvent) && (document.removeEventListener || document.detachEvent);
   },
   api.isInDOM = function(target) {
-    return (target !== undefined) && (target !== null) && !!target.ownerDocument && (window === (target.ownerDocument.defaultView || target.ownerDocument.parentWindow));
+    return (target != null) && !!target.ownerDocument && (window === (target.ownerDocument.defaultView || target.ownerDocument.parentWindow));
   },
   api.addEventListener = function(e, f) {
     var el = api.window() ? document : config.target;
@@ -239,24 +246,14 @@ var scrollAPI = (function() {
   },
   api.pointerEvent = function(e){
     var out = {x:0, y:0};
-    if(e.type == 'touchstart' ||
-       e.type == 'touchmove' ||
-       e.type == 'touchend' ||
-       e.type == 'touchcancel'){
-      var touch = e.targetTouches[0] || e.changedTouches[0] || e.touches[0];
-      out.x = touch.pageX;
-      out.y = touch.pageY;
-    } else if (e.type == 'contextmenu' ||
-               e.type == 'mousedown' ||
-               e.type == 'mouseup' ||
-               e.type == 'mousemove' ||
-               e.type == 'mouseover'||
-               e.type == 'mouseout' ||
-               e.type == 'mouseenter' ||
-               e.type == 'mouseleave') {
-      out.x = e.pageX;
-      out.y = e.pageY;
-    }
+    var mobile = {touchstart: 1, touchmove: 1, touchend: 1, touchcancel: 1};
+    var pc = {mousedown: 1, mouseup: 1, mousemove: 1, mouseover: 1, mouseout: 1, mouseenter: 1, mouseleave: 1, contextmenu: 1};
+    var h = mobile[e.type];
+    if(h || pc[e.type]) {
+      var tar = h ? (e.targetTouches[0] || e.changedTouches[0] || e.touches[0]) : e;
+      out.x = tar.pageX;
+      out.y = tar.pageY;
+    } else throw new EvalError('[ScrollAPI] ' + e.type + ' is not supported !');
     return out;
   },
   api.equals = function(e) {

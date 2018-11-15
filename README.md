@@ -25,7 +25,7 @@ A simple scroll api for a website
   window.addEventListener("load", function() {
     scrollAPI.init({ //target is document.documentElement by default
       scroll: -70 //scroll to the target with a marge of -70
-    }),
+    });
     console.log(scrollAPI.isEnable());
     console.log(scrollAPI.barWidthY());
     console.log(scrollAPI.isScrollable()); //html element
@@ -45,7 +45,7 @@ A simple scroll api for a website
   window.addEventListener("load", function() {
     scrollAPI.init({
       target: document.getElementById('el')
-    }),
+    });
     console.log(scrollAPI.isEnable());
     console.log(scrollAPI.barWidthY());
     console.log(scrollAPI.isScrollable()); //el element
@@ -63,6 +63,7 @@ A simple scroll api for a website
   
   ```javascript
   window.addEventListener("load", function() {
+    scrollAPI.init();
     document.addEventListener('scroll', function() {
       console.log('scrolled percent: ' + scrollAPI.percentScroll() + ' %');
     });

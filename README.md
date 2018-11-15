@@ -8,7 +8,7 @@ A simple scroll api for a website
   argument => [] = optional
   * scroll.init([config]) : [void] init the api (if the config is empty, target is document.documentElement)
     config = {target: [HTMLElement], scroll: [number]};
-  * scrollAPI.isEnable() : [boolean] check if the scrollbar is enable
+  * scrollAPI.isEnable() : [boolean] check if the scrollAPI.disable is enable
   * scrollAPI.scrollTo(el, marge) : [void] scroll to the element defined with a marge
   * scrollAPI.enable() : [void] enable the scrollbar
   * scrollAPI.disable() : [void] disable the scrollbar
@@ -17,7 +17,8 @@ A simple scroll api for a website
   * scrollAPI.clickedOnBarY(e[, x, y]) : [boolean] check if the user has clicked on the scrollbar at right
   * scrollAPI.clickedOnBarX(e[, x, y]) : [boolean] check if the user has clicked on the scrollbar at bottom
   * scrollAPI.clickedOnBar(e[, x, y]) : [boolean] clickedOnBarY(e[, x, y]) || clickedOnBarX(e[, x, y]) 
-  * scrollAPI.isScrollable([target]) : [boolean] check if the element is scrollable
+  * scrollAPI.percentScroll([target, round]) : [number] get the percent of scrolled
+  * scrollAPI.isScrollable([target]) : [boolean] check if the element is scrollable (overflow, height)
   
 ### Examples
   ```javascript
@@ -57,6 +58,12 @@ A simple scroll api for a website
       console.log("bottom bar: " + scrollAPI.clickedOnBarX(e));
       console.log("bottom/right bar: " + scrollAPI.clickedOnBar(e));
     }, false);
+  });
+  ```
+  
+  ```javascript
+  document.addEventListener('scroll', function(e) {
+    console.log('scrolled percent: ' + scrollAPI.percentScroll(document.documentElement) + ' %');
   });
   ```
   

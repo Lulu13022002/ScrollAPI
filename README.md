@@ -6,7 +6,7 @@ A simple scroll api for a website
   
 ### Usage of functions
   argument => [] = optional
-  * scroll.init([config]) : [void] init the api (if the config is empty, target is document.documentElement)
+  * scrollAPI.init([config]) : [void] init the api (if the config is empty, target is document.documentElement)
     config = {target: [HTMLElement], scroll: [number]};
   * scrollAPI.isEnable() : [boolean] check if the scrollAPI.disable is enable
   * scrollAPI.scrollTo(el, marge) : [void] scroll to the element defined with a marge

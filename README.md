@@ -2,7 +2,7 @@
 A simple scroll api for a website
 
 ### Installation
-  copy and paste the main.js and add `<script src="/main.js"></script> in the html file`
+  copy and paste the main.js and add `<script src="/main.js"></script>` in the html file
   or use directly $ git clone https://github.com/Lulu13022002/ScrollAPI
 ### Usage of functions
   argument => [] = optional

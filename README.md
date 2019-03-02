@@ -4,6 +4,7 @@ A simple scroll api for a website
 ### Installation
   copy and paste the main.js and add `<script src="/main.js"></script>` in the html file
   or use directly $ git clone https://github.com/Lulu13022002/ScrollAPI
+  
 ### Usage of functions
   argument => [] = optional
   * scrollAPI.init([config]) : [void] init the api (if the config is empty, target is document.documentElement)
@@ -79,3 +80,8 @@ A simple scroll api for a website
     console.log(scrollAPI.isScrollable(document.getElementById('el'))); //el element
   });
   ```
+  
+  ### Branches
+    - [master](https://github.com/Lulu13022002/ScrollAPI) stable project
+    - [development](https://github.com/Lulu13022002/ScrollAPI/tree/development) last update
+    of project but there may be some bugs

@@ -1,5 +1,7 @@
 # ScrollAPI v1.0
 A simple scroll api for a website
+[![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0)
+[![Generic badge](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Lulu13022002/ScrollAPI/blob/master/CONTRIBUTING)
 
 ### Installation
   copy and paste the main.js and add `<script src="/main.js"></script>` in the html file

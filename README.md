@@ -81,7 +81,7 @@ A simple scroll api for a website
   });
   ```
   
-  ### Branches
-    - [master](https://github.com/Lulu13022002/ScrollAPI) stable project
-    - [development](https://github.com/Lulu13022002/ScrollAPI/tree/development) last update
-    of project but there may be some bugs
+### Branches
+  - [master](https://github.com/Lulu13022002/ScrollAPI) stable project
+  - [development](https://github.com/Lulu13022002/ScrollAPI/tree/development) last update
+  of project but there may be some bugs

@@ -1,17 +1,17 @@
 # ScrollAPI v1.0
 A simple scroll api for a website
 
-[![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-sa/4.0)
+[![MIT License](https://img.shields.io/badge/License-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 [![Generic badge](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Lulu13022002/ScrollAPI/blob/master/CONTRIBUTING)
 
 ### Installation
   copy and paste the main.js and add `<script src="/main.js"></script>` in the html file
-  or use directly $ git clone https://github.com/Lulu13022002/ScrollAPI
-  
+  or use directly `$ git clone https://github.com/Lulu13022002/ScrollAPI`
+
 ### Usage of functions
   argument => [] = optional
-  * scrollAPI.init([config]) : [void] init the api (if the config is empty, target is document.documentElement)
-    config = {target: [HTMLElement], scroll: [number]};
+  * scrollAPI.init([config]) : [void] init the api (if the config is empty, target is document.documentElement and debug is false)
+    config = {target: [HTMLElement], scrollTo: [number], debug: [boolean]};
   * scrollAPI.isEnable() : [boolean] check if the scrollAPI.disable is enable
   * scrollAPI.scrollTo(el, marge) : [void] scroll to the element defined with a marge
   * scrollAPI.enable() : [void] enable the scrollbar
@@ -84,7 +84,19 @@ A simple scroll api for a website
   });
   ```
   
+  
+### Modules
+  * scrollAPI@compatibility: compatibility data
+  * scrollAPI@polyfill: polyfill functions
+  
 ### Branches
   - [master](https://github.com/Lulu13022002/ScrollAPI) stable project
   - [development](https://github.com/Lulu13022002/ScrollAPI/tree/development) last update
   of project but there may be some bugs
+  
+### References
+  * [Object.keys](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys#Polyfill), [Array.prototype.indexOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf#Polyfill) from 'scrollAPI@compatibility'
+  * isEventSupported, useHasFeature, canUseDOM from 'scrollAPI@polyfill': [facebookarchive/fixed-data-table](https://github.com/facebookarchive/fixed-data-table)
+  * CSS interface from 'scrollAPI@polyfill': [JQuery](https://github.com/jquery/jquery)
+  
+  

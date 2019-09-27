@@ -190,11 +190,24 @@ var scrollAPI = (function() {
       keys: function(obj) {
         if(Object.keys) return Object.keys.call(null, obj);
         else {
-          var array = [];
-          for (var key in obj) {
-            if (obj.hasOwnProperty(key)) array.push(key);
+          var hasOwnProperty = Object.prototype.hasOwnProperty, hasDontEnumBug = !({ toString: null }).propertyIsEnumerable('toString'),
+              dontEnums = ['toString', 'toLocaleString', 'valueOf', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'constructor'],
+              dontEnumsLength = dontEnums.length;
+
+          if (typeof obj !== 'function' && (typeof obj !== 'object' || obj === null)) throw new TypeError('Object.keys called on non-object');
+
+          var result = [], prop, i;
+
+          for (prop in obj) {
+            if (hasOwnProperty.call(obj, prop)) result.push(prop);
           }
-          return array;
+
+          if (hasDontEnumBug) {
+            for (i = 0; i < dontEnumsLength; i++) {
+              if (hasOwnProperty.call(obj, dontEnums[i])) result.push(dontEnums[i]);
+            }
+          }
+          return result;
         }
       },
       preventDefault: function(e) {

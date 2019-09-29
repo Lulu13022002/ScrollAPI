@@ -34,7 +34,7 @@ A simple scroll api for a website
     console.log(instance.barWidthY());
     console.log(instance.isScrollable());
     scrollAPI.disable();
-    setTimeout(instance.enable, 1000); //1000 == 1s
+    setTimeout(instance.enable, 1000); //1000ms == 1s
   }, false);
   
   document.addEventListener("mousedown", function(e) {
@@ -60,6 +60,14 @@ A simple scroll api for a website
     console.log("Module test version -> " + scrollAPI.module.test.vers);
   }, false);
   ```
+  > **Note**: You cannot implement a module with the same name that existing in default modules or in your modules. By default the reserved name are compatibility and polyfill. Maybe i will fixe that in the future for the default modules to allow custom@polyfill and custom@compatibility
+  
+  Debug and safe mode
+  ```javascript
+  scrollAPI.safeMode = true; // Disable all custom modules
+  scrollAPI.debug = true; // Show debug messages
+  scrollAPI.init();
+  ```
   
   Static functions
   ```javascript
@@ -74,7 +82,7 @@ A simple scroll api for a website
     setTimeout(function() {
       scrollAPI.scrollTo("end", 0, -100);
     }, 2000);
-  });
+  }, false);
   ```
   
   

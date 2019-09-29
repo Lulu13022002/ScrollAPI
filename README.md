@@ -88,6 +88,6 @@ A simple scroll api for a website
   
 ### References
   * [Object.keys](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys#Polyfill), [Array.prototype.indexOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf#Polyfill),
-  [supportsPassive](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#Improving_scrolling_performance_with_passive_listeners) from 'scrollAPI@compatibility'
+  [supportsPassive](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#Improving_scrolling_performance_with_passive_listeners) from 'scrollAPI@compatibility': Mozilla
   * isEventSupported, useHasFeature, canUseDOM from 'scrollAPI@polyfill': [facebookarchive/fixed-data-table](https://github.com/facebookarchive/fixed-data-table)
   * CSS interface from 'scrollAPI@polyfill': [JQuery](https://github.com/jquery/jquery)

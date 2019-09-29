@@ -37,15 +37,16 @@ A simple scroll api for a website
     setTimeout(instance.enable, 1000); //1000ms == 1s
   }, false);
   
+  var supportsPassive = scrollAPI.module.compatibility.supportsPassive;
   document.addEventListener("mousedown", function(e) {
     console.log("right bar: " + instance.clickedOnBarY(e));
     console.log("bottom bar: " + instance.clickedOnBarX(e));
     console.log("bottom/right bar: " + instance.clickedOnBar(e));
-  }, false);
+  }, supportsPassive ? {passive: true} : false);
   
   document.addEventListener('scroll', function() {
     console.log('scrolled percent: ' + instance.percentScroll() + ' %');
-  }, false);
+  }, supportsPassive ? {passive: true} : false);
   ```
   
   Implements your custom modules

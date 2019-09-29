@@ -1,4 +1,4 @@
-# ScrollAPI v1.0
+# ScrollAPI [Development branch]
 A simple scroll api for a website
 
 [![MIT License](https://img.shields.io/badge/License-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
@@ -33,7 +33,7 @@ A simple scroll api for a website
     console.log(instance.isEnable());
     console.log(instance.barWidthY());
     console.log(instance.isScrollable());
-    scrollAPI.disable();
+    instance.disable();
     setTimeout(instance.enable, 1000); //1000ms == 1s
   }, false);
   

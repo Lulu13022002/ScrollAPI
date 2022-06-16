@@ -109,7 +109,7 @@
     pipnet.addEventListener('load', function() {
       pipnet.exports('scrollAPI', self, module, {writeInGlobal: false, writeInSelfModule: true});
       
-      PL = pipnet.module['pipnet@polyfill'];
+      PL = pipnet.module['pipnet@polyfill']; // todo fail loaded too late
       events['barmousedown'] = PL.event.create('barMouseDown');
       events['barmouseup'] = PL.event.create('barMouseUp');
     }, false);

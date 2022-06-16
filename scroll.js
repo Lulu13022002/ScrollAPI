@@ -118,7 +118,7 @@
           _api.isWindow = pipnet.isWindow(target);
           const loc = api.scrollMeter(target, _api.isWindow);
           scrollBar.x = loc.x, scrollBar.y = loc.y;
-          window.addEventListener('scroll', _api.scrollOuput, false);
+          target.addEventListener('scroll', _api.scrollOuput, false);
 
           if(self.debug >= 3) console.debug("ScrollAPI << New assigned element", target);
         },
@@ -135,11 +135,11 @@
           if(scrollBar.isFrozen) return;
           scrollBar.isFrozen = true;
           if(!pipnet.isMobile) {
-            window.addEventListener('click', api.applyFocus, false, doc); /* Apply focus to retrieve the good target for key event */
-            window.addEventListener('keydown', _api.preventDefaultForScrollKeys);
-            window.addEventListener('scroll', _api.resetBar);
-            window.addEventListener(pipnet.event.wheel.name, _api.preventDefault, {passive: false});
-            window.addEventListener('mousedown', _api.preventMiddleScroll);
+            target.addEventListener('click', api.applyFocus, false, doc); /* Apply focus to retrieve the good target for key event */
+            target.addEventListener('keydown', _api.preventDefaultForScrollKeys);
+            target.addEventListener('scroll', _api.resetBar);
+            target.addEventListener(pipnet.event.wheel.name, _api.preventDefault, {passive: false});
+            target.addEventListener('mousedown', _api.preventMiddleScroll);
           } else {
             const style = target.style;
             styleS[0] = style.overflow, styleS[1] = style['touch-action'];
@@ -152,11 +152,11 @@
           scrollBar.isFrozen = false;
           if(!pipnet.isMobile) {
             api.resetFocus();
-            window.removeEventListener('click', api.applyFocus, false, doc);
-            window.removeEventListener('keydown', _api.preventDefaultForScrollKeys);
-            window.removeEventListener('scroll', _api.resetBar);
-            window.removeEventListener(pipnet.event.wheel.name, _api.preventDefault, {passive: false});
-            _api.removeEventListener('mousedown', _api.preventMiddleScroll);
+            target.removeEventListener('click', api.applyFocus, false, doc);
+            target.removeEventListener('keydown', _api.preventDefaultForScrollKeys);
+            target.removeEventListener('scroll', _api.resetBar);
+            target.removeEventListener(pipnet.event.wheel.name, _api.preventDefault, {passive: false});
+            target.removeEventListener('mousedown', _api.preventMiddleScroll);
           } else {
             target.style.overflow = styleS[0];
             target.style['touch-action'] = styleS[1];

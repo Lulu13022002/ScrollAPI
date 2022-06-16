@@ -25,21 +25,32 @@
         bar: function(target, isInDOM, isWindow, t1, t2, t3) {
           if(!isInDOM) return NaN;
           if(isWindow == null) isWindow = pipnet.isWindow(target);
+
+          const oldOverflowStyle = (isWindow ? html : target).style.msOverflowStyle;
+          (isWindow ? html : target).style.msOverflowStyle = 'scrollbar'; // fix WinJS apps
+
+          var result = 0;
           if(isWindow) {
-            if(('inner' + t1) in window) return window['inner' + t1] - html['client' + t1]; // Modern way
-            else { // IE8- Find a shortcut...
+            if(('inner' + t1) in window) result = window['inner' + t1] - Math.min(document.body['offset' + t1], html['client' + t1]); // Modern way
+            else {
+            // IE8- Find a shortcut...
               if(pipnet.canMeasureHTML) { // IE6-8
                 var ie8 = html['offset' + t1] - html['client' + t1] - 3; // 3px is the border in IE
                 if(ie8 > 0) return ie8; // IE8
                 var PL = self.pip.PL;
-                return html['scroll' + t2] > html['offset' + t2] && // In IE7- scrollBarY is always visible so we need an extra check for isScrollable
-                       PL.CSS.get(html, 'overflow-' + t3, PL.CSS.styles(html)).indexOf('hidden') === -1 &&
-                       PL.CSS.get(body, 'overflow-' + t3, PL.CSS.styles(body)).indexOf('hidden') === -1 ? 18 : 0; // IE6-7 Impossible to get this value but we know x|y = 21 with a border width of 1.5px (21 - (2*1.5) => 18) so detect only if this is scrollable (overflow)
+                result = html['scroll' + t2] > html['offset' + t2] && // In IE7- scrollBarY is always visible so we need an extra check for isScrollable
+                        PL.CSS.get(html, 'overflow-' + t3, PL.CSS.styles(html)).indexOf('hidden') === -1 &&
+                        PL.CSS.get(body, 'overflow-' + t3, PL.CSS.styles(body)).indexOf('hidden') === -1 ? 18 : 0; // IE6-7 Impossible to get this value but we know x|y = 21 with a border width of 1.5px (21 - (2*1.5) => 18) so detect only if this is scrollable (overflow)
+              } else {
+                result = body['scroll' + t2] > body['offset' + t2] ? body['offset' + t1] - body['client' + t1] - 3 : 0; // IE5-
               }
-              return body['scroll' + t2] > body['offset' + t2] ? body['offset' + t1] - body['client' + t1] - 3 : 0; // IE5-
             }
+          } else {
+            result = target['offset' + t1] - target['client' + t1];
           }
-          return target['offset' + t1] - target['client' + t1];
+
+          (isWindow ? html : target).style.msOverflowStyle = oldOverflowStyle;
+          return result;
         },
         /* t1 = Left|Top . t2 = Width|Height */
         percent: function(el, round, isInDOM, isWindow, t1, t2) {
@@ -48,8 +59,8 @@
           if(isWindow == null) isWindow = pipnet.isWindow(el);
           if(isWindow) el = html;
           var PL = self.pip.PL;
-          var r = (PL.element['scroll' + t1](el, isWindow, 'round') / (PL.element['scroll' + t2](el, isWindow) - PL.element['client' + t2](el, isWindow))) * 100;
-          return round ? Math.round(r) : r;
+          var result = (PL.element['scroll' + t1](el, isWindow, 'round') / (PL.element['scroll' + t2](el, isWindow) - PL.element['client' + t2](el, isWindow))) * 100;
+          return round ? Math.round(result) : result;
         },
         /* t1 = Width|Height . t2 = Height|Width . t3 = x|y . t4 = X|Y . t5 = Top|Left */
         isScrollable: function(el, isInDOM, isWindow, t1, t2, t3, t4, t5) {
@@ -64,15 +75,17 @@
             var PL = self.pip.PL;
             var currentValue = PL.element['scroll' + t5](el, isWindow), isScrollable = !!(PL.element['increaseScroll' + t5](el, isWindow, true)); /* Simulate scroll then reset => This show if the element is scrollable but only with CODE so we need some extra check like overflow/touchaction */
             PL.element['setScroll' + t5](el, isWindow, currentValue); // Reset value before check. This check replace the check of barWidth
+            
             if(!isScrollable) return false;
+            
             var style = PL.CSS.styles(el);
             var targetCheck = PL.CSS.get(el, 'overflow-' + t3, style).indexOf('hidden') === -1 && PL.CSS.get(el, pipnet.deprecatedPrefix.CSS.get('-ms-') + 'touch-action', style) !== 'none';
             if(!isWindow) return targetCheck;
-            else {
-              var bStyle = PL.CSS.styles(body);
-              return targetCheck && PL.CSS.get(body, 'overflow-' + t3, bStyle).indexOf('hidden') === -1 && PL.CSS.get(body, pipnet.deprecatedPrefix.CSS.get('-ms-') + 'touch-action', bStyle) !== 'none';
-            }
+
+            var bStyle = PL.CSS.styles(body);
+            return targetCheck && PL.CSS.get(body, 'overflow-' + t3, bStyle).indexOf('hidden') === -1 && PL.CSS.get(body, pipnet.deprecatedPrefix.CSS.get('-ms-') + 'touch-action', bStyle) !== 'none';
           }
+          //return true;
           return self['bar' + t2 + t4](el, isInDOM, isWindow) > 0;
         },
         /* t1 = Width|Height . t2 = Top|Left */
@@ -99,7 +112,7 @@
       PL = pipnet.module['pipnet@polyfill'];
       events['barmousedown'] = PL.event.create('barMouseDown');
       events['barmouseup'] = PL.event.create('barMouseUp');
-    });
+    }, false);
 
     self.detach = function(target) {
       if(!target.scrollAPI) throw new EvalError("ScrollAPI << Target isn't attached to the API");
@@ -130,10 +143,10 @@
           target.scrollAPI = null; // delete keyword is too slow and have some issues with IE7- In JS the GC is called automatically on idle object
           if(self.debug >= 3) console.debug("ScrollAPI << Unassigned element", target);
         },
-        _self.isEnable = function() {
+        _self.isFrozen = function() {
           return scrollBar.isFrozen;
         },
-        _self.disable = function() {
+        _self.freeze = function() {
           if(scrollBar.isFrozen) return;
           scrollBar.isFrozen = true;
           if(!pipnet.isMobile) {
@@ -150,7 +163,7 @@
             target.style[msPrefix + 'touch-action'] = "none";
           }
         },
-        _self.enable = function() {
+        _self.unfreeze = function() {
           if(!scrollBar.isFrozen) return;
           scrollBar.isFrozen = false;
           if(!pipnet.isMobile) {
@@ -265,11 +278,11 @@
              (keyCode === 38 && loc.y === 0)) return; // In IE scroll at maximum doesn't scroll the parent but this doesn't fix a feature lost in IE to avoid behavoir modifications. Moreover a patch will be too heavy including modified focus and new keydown event (api.parentScrollable(_target.parentElement)).dispatchEvent(e);
           _api.preventDefault(e, parent, !isNull); /* Deprecated but have more compatiblity and too slow to work with new value like e.key|code with support of old browsers */
         },
-        _api.preventDefault = function(e, parent, isntNull) {
+        _api.preventDefault = function(e, parent, notNull) {
           e = PL.event.source(e);
           var _target = PL.event.target(e);
-          parent = parent || api.parentScrollable(_target), isntNull = isntNull || parent != null;
-          if(isntNull && (parent === target || (pipnet.isWindow(parent) && _api.isWindow))) PL.event.preventDefault(e);
+          parent = parent || api.parentScrollable(_target), notNull = notNull || parent != null;
+          if(notNull && (parent === target || (pipnet.isWindow(parent) && _api.isWindow))) PL.event.preventDefault(e);
         },
         _api.resetBar = function() {
           var wTarget = _api.isWindow ? window : target;
@@ -404,7 +417,9 @@
     if(e.type === 'focus') {
       focus.outline = this.style.outline;
       this.style.outline = "none";
-    } else this.style.outline = focus.outline; //maybe useless
+    } else {
+      this.style.outline = focus.outline; //maybe useless
+    }
   },
   api.applyFocus = function(e) {
     e = PL.event.source(e);

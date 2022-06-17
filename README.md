@@ -12,8 +12,8 @@ The main usage of the library is to freeze the scrolling while display a modal b
   
   You should copy the file of your choice and add a script block in the html file as the following:\
   `<script src="/scroll.js"></script>`\
-  Also if you decide to use pipnet you should be sure that pipnet will be loaded before this library (and initialized before).
   The legacy version needs pipnet in order to work properly.
+  Also if you decide to use pipnet you should be sure that pipnet will be loaded before this library (and initialized before).
 
 ### Usage of functions
   [parameter] = optional
@@ -53,9 +53,11 @@ The main usage of the library is to freeze the scrolling while display a modal b
     console.log("bottom/right bar: " + instance.clickedOnBar(e));
   }, supportsPassive ? {passive: true} : false);
   
-  document.addEventListener('scroll', () => {
-    console.log('scrolled percent: ' + instance.percentScroll() + ' %');
-  }, supportsPassive ? {passive: true} : false);
+  window.addEventListener("load", () => {
+    document.addEventListener('scroll', () => {
+      console.log('scrolled percent: ' + instance.percentScroll() + ' %');
+    }, supportsPassive ? {passive: true} : false);
+  }, false);
   ```
   
   Implements your custom modules

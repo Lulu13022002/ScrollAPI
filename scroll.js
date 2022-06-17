@@ -27,16 +27,8 @@
           if(!isInDOM) return NaN;
           if(isWindow == null) isWindow = pipnet.isWindow(target);
 
-          const oldOverflowStyle = (isWindow ? html : target).style.msOverflowStyle;
-          (isWindow ? html : target).style.msOverflowStyle = 'scrollbar'; // fix WinJS apps
-
-          let result = 0;
-          if(isWindow) result = window['inner' + t1] - Math.min(document.body['offset' + t1], html['client' + t1]);
-          else result = target['offset' + t1] - target['client' + t1];
-
-          (isWindow ? html : target).style.msOverflowStyle = oldOverflowStyle;
-
-          return result;
+          if(isWindow) return window['inner' + t1] - Math.min(document.body['offset' + t1], html['client' + t1]);
+          return target['offset' + t1] - target['client' + t1];
         },
         /* t1 = Left|Top . t2 = Width|Height */
         percent: (el, round, isInDOM, isWindow, t1, t2) => {

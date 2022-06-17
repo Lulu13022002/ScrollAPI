@@ -1,7 +1,7 @@
 /* ScrollAPI 1.1-beta . (c) The ScrollAPI contributors . github.com/Lulu13022002/ScrollAPI/blob/master/LICENSE */
 (doc => {
   'use strict';
-  const html = doc.documentElement, head = doc.getElementsByTagName('head')[0], body = doc.body;
+  const html = doc.documentElement, body = doc.body;
   const self = {debug: 0, safeMode: false, useModule: false, pipoption: {'exclude': ['locate']}}, module = {}, api = {}, events = {};
   const focus = {target: null, needPatch: false};
   let G, isInit = false;
@@ -25,16 +25,16 @@
         /* t1 = Width|Height . t2 = Height|Width . t3 = x|y */
         bar: (target, isInDOM, isWindow, t1, t2, t3) => {
           if(!isInDOM) return NaN;
-          if(isWindow == null) isWindow = pipnet.isWindow(target);
+          if(isWindow == null) isWindow = api.isWindow(target);
 
-          if(isWindow) return window['inner' + t1] - Math.min(document.body['offset' + t1], html['client' + t1]);
+          if(isWindow) return window['inner' + t1] - Math.min(body['offset' + t1], html['client' + t1]);
           return target['offset' + t1] - target['client' + t1];
         },
         /* t1 = Left|Top . t2 = Width|Height */
         percent: (el, round, isInDOM, isWindow, t1, t2) => {
           if(isInDOM == null) isInDOM = pipnet.isInDOM(el);
           if(!isInDOM) return NaN;
-          if(isWindow == null) isWindow = pipnet.isWindow(el);
+          if(isWindow == null) isWindow = api.isWindow(el);
           if(isWindow) el = html;
           const PL = self.pip.PL;
           const result = (Math.round(api['scroll' + t1](el, isWindow)) / (api['scroll' + t2](el, isWindow) - api['client' + t2](el, isWindow))) * 100;
@@ -42,10 +42,9 @@
         },
         /* t1 = Width|Height . t2 = Height|Width . t3 = x|y . t4 = X|Y . t5 = Top|Left */
         isScrollable: (el, isInDOM, isWindow, t1, t2, t3, t4, t5) => {
-          console.log("scrollable");
           if(isInDOM == null) isInDOM = pipnet.isInDOM(el);
           if(!isInDOM) throw new TypeError("ScrollAPI << " + el + " isn't a valid HTMLElement");
-          if(isWindow == null) isWindow = pipnet.isWindow(el);
+          if(isWindow == null) isWindow = api.isWindow(el);
           if((isWindow ? Math.min(html['scroll' + t1], body['scroll' + t1]) : el['scroll' + t1]) === 0) return false;
           if(isWindow) el = html;
 
@@ -107,7 +106,7 @@
           if(assigned) throw new EvalError("ScrollAPI << API already assigned for this element");
           if(!pipnet.isInDOM(target)) throw new TypeError("ScrollAPI << config::target: " + target + " isn't a valid HTMLElement");
           assigned = true;
-          _api.isWindow = pipnet.isWindow(target);
+          _api.isWindow = api.isWindow(target);
           const loc = api.scrollMeter(target, _api.isWindow);
           scrollBar.x = loc.x, scrollBar.y = loc.y;
           target.addEventListener('scroll', _api.scrollOuput, false);
@@ -249,7 +248,7 @@
         _api.preventDefault = (e, parent, notNull) => {
           const _target = e.target;
           parent = parent || api.parentScrollable(_target), notNull = notNull || parent != null;
-          if(notNull && (parent === target || (pipnet.isWindow(parent) && _api.isWindow))) e.preventDefault();
+          if(notNull && (parent === target || (api.isWindow(parent) && _api.isWindow))) e.preventDefault();
         },
         _api.resetBar = () => {
           (_api.isWindow ? window : targe).scroll(scrollBar.x, scrollBar.y);
@@ -291,7 +290,7 @@
     return G.clickedOnBar(target, e, x, y, isWindow, 'y', 'x');
   },
   self.clickedOnBar = (target, e, x, y, isWindow) => {
-    if(isWindow == null) isWindow = pipnet.isWindow(target);
+    if(isWindow == null) isWindow = api.isWindow(target);
     if(x == null || y == null) {
       const loc = pipnet.event.pointer(e, 'client');
       x = x || loc.x, y = y || loc.y;
@@ -306,7 +305,7 @@
   },
   self.barMeter = (target, isInDOM, isWindow) => {
     if(isInDOM == null) isInDOM = pipnet.isInDOM(target);
-    if(isWindow == null) isWindow = pipnet.isWindow(target);
+    if(isWindow == null) isWindow = api.isWindow(target);
     return {x: self.barHeightX(target, isInDOM, isWindow), y: self.barWidthY(target, isInDOM, isWindow)};
   },
   self.atEndX = (target, isWindow, scrollTop) => {
@@ -316,7 +315,7 @@
     return G.atEnd(target, isWindow, scrollLeft, 'Height', 'Top');
   },
   self.atEnd = (target, isWindow, scrollMeter) => {
-    if(isWindow == null) isWindow = pipnet.isWindow(target);
+    if(isWindow == null) isWindow = api.isWindow(target);
     scrollMeter || (scrollMeter = Math.round(api.scrollMeter(target, isWindow)));
     return self.atEndX(target, isWindow, scrollMeter.x) && self.atEndY(target, isWindow, scrollMeter.y);
   },
@@ -353,7 +352,7 @@
   },
   self.percent = (el, round, isInDOM, isWindow) => {
     if(isInDOM == null) isInDOM = pipnet.isInDOM(el);
-    if(isWindow == null) isWindow = pipnet.isWindow(el);
+    if(isWindow == null) isWindow = api.isWindow(el);
     return {x: self.percentX(el, round, isInDOM, isWindow), y: self.percentY(el, round, isInDOM, isWindow)};
   },
   self.isScrollableX = (el, isInDOM, isWindow) => {
@@ -364,11 +363,15 @@
   },
   self.isScrollable = (el, isInDOM, isWindow) => {
     if(isInDOM == null) isInDOM = pipnet.isInDOM(el);
-    if(isWindow == null) isWindow = pipnet.isWindow(el);
+    if(isWindow == null) isWindow = api.isWindow(el);
     return self.isScrollableX(el, isInDOM, isWindow) || self.isScrollableY(el, isInDOM, isWindow);
   };
 
   /* API */
+
+  self.isWindow = el => {
+    return el === html || el === body;
+  };
   api.parentScrollable = el => {
     while(!self.isScrollable(el, true) && el.parentElement != null) el = el.parentElement;
     if(el === html) return null; // Return body before html so body if scrollable window or html if not

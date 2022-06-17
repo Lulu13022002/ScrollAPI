@@ -1,7 +1,7 @@
 /* ScrollAPI 1.1-beta . (c) The ScrollAPI contributors . github.com/Lulu13022002/ScrollAPI/blob/master/LICENSE */
 (function(doc) {
   'use strict';
-  var html = doc.documentElement, head = doc.getElementsByTagName('head')[0], body = doc.body;
+  var html = doc.documentElement, body = doc.body;
   var self = {debug: 0, safeMode: false, useModule: false, pipoption: {'exclude': ['locate']}}, module = {}, api = {}, events = {};
   var focus = {target: null, needPatch: false};
   var G, isInit = false;
@@ -31,7 +31,7 @@
 
           var result = 0;
           if(isWindow) {
-            if(('inner' + t1) in window) result = window['inner' + t1] - Math.min(document.body['offset' + t1], html['client' + t1]); // Modern way
+            if(('inner' + t1) in window) result = window['inner' + t1] - Math.min(body['offset' + t1], html['client' + t1]); // Modern way
             else {
             // IE8- Find a shortcut...
               if(pipnet.canMeasureHTML) { // IE6-8

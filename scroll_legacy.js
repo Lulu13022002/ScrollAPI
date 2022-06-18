@@ -22,8 +22,9 @@
       };
       return {
         /* t1 = Width|Height . t2 = Height|Width . t3 = x|y */
-        bar: function(target, isInDOM, isWindow, t1, t2, t3) {
-          if(!isInDOM) return NaN;
+        bar: function(target, isInBody, isWindow, t1, t2, t3) {
+          if(isInBody == null) isInBody = pipnet.isInDOM(target);
+          if(!isInBody) return NaN;
           if(isWindow == null) isWindow = pipnet.isWindow(target);
 
           const oldOverflowStyle = (isWindow ? html : target).style.msOverflowStyle;
@@ -53,9 +54,9 @@
           return result;
         },
         /* t1 = Left|Top . t2 = Width|Height */
-        percent: function(el, round, isInDOM, isWindow, t1, t2) {
-          if(isInDOM == null) isInDOM = pipnet.isInDOM(el);
-          if(!isInDOM) return NaN;
+        percent: function(el, round, isInBody, isWindow, t1, t2) {
+          if(isInBody == null) isInBody = pipnet.isInDOM(el);
+          if(!isInBody) return NaN;
           if(isWindow == null) isWindow = pipnet.isWindow(el);
           if(isWindow) el = html;
           var PL = self.pip.PL;
@@ -63,9 +64,9 @@
           return round ? Math.round(result) : result;
         },
         /* t1 = Width|Height . t2 = Height|Width . t3 = x|y . t4 = X|Y . t5 = Top|Left */
-        isScrollable: function(el, isInDOM, isWindow, t1, t2, t3, t4, t5) {
-          if(isInDOM == null) isInDOM = pipnet.isInDOM(el);
-          if(!isInDOM) throw new TypeError("ScrollAPI << " + el + " isn't a valid HTMLElement");
+        isScrollable: function(el, isInBody, isWindow, t1, t2, t3, t4, t5) {
+          if(isInBody == null) isInBody = pipnet.isInDOM(el);
+          if(!isInBody) throw new TypeError("ScrollAPI << " + el + " isn't a valid HTMLElement");
           if(isWindow == null) isWindow = pipnet.isWindow(el);
           if((isWindow ? Math.min(html['scroll' + t1], body['scroll' + t1]) : el['scroll' + t1]) === 0) return false;
           if(isWindow) el = html;
@@ -86,7 +87,7 @@
             return targetCheck && PL.CSS.get(body, 'overflow-' + t3, bStyle).indexOf('hidden') === -1 && PL.CSS.get(body, pipnet.deprecatedPrefix.CSS.get('-ms-') + 'touch-action', bStyle) !== 'none';
           }
           //return true;
-          return self['bar' + t2 + t4](el, isInDOM, isWindow) > 0;
+          return self['bar' + t2 + t4](el, isInBody, isWindow) > 0;
         },
         /* t1 = Width|Height . t2 = Top|Left */
         atEnd: function(target, isWindow, scrollValue, t1, t2) {
@@ -94,7 +95,18 @@
           scrollValue || (scrollValue = self.pip.PL.element['scroll' + t2](target, isWindow, 'round'));
           if(isWindow) target = html;
           return target['scroll' + t1] - scrollValue === target['client' + t1];
-        }
+        },
+        /* t1 = x|y t2 = y|x */
+        clickedOnBar: function(target, e, x1, x2, isWindow, t1, t2) {
+          e || (e = window.event);
+          if(isWindow == null) isWindow = pipnet.isWindow(target);
+          if(x1 == null || x2 == null) {
+            var loc = self.pip.event.basicPointer(e);
+            x1 = x1 || loc[t1], x2 = x2 || loc[t2];
+          }
+          var clientMeter = self.pip.PL.element.clientMeter(target, isWindow);
+          return clientMeter[t2] <= x2 && x1 <= clientMeter[t1];
+        },
       }
     })();
 
@@ -109,7 +121,7 @@
     pipnet.addEventListener('load', function() {
       pipnet.exports('scrollAPI', self, module, {writeInGlobal: false, writeInSelfModule: true});
       
-      PL = pipnet.module['pipnet@polyfill']; // todo fail loaded too late
+      PL = pipnet.module['pipnet@polyfill'];
       events['barmousedown'] = PL.event.create('barMouseDown');
       events['barmouseup'] = PL.event.create('barMouseUp');
     }, false);
@@ -153,7 +165,7 @@
             _api.addEventListener('click', api.applyFocus, false, doc); /* Apply focus to retrieve the good target for key event */
             _api.addEventListener('keydown', _api.preventDefaultForScrollKeys);
             _api.addEventListener('scroll', _api.resetBar);
-            _api.addEventListener(pipnet.event.wheel.name, _api.preventDefault, {passive: false});
+            _api.addEventListener(pipnet.event.wheel.name, _api.preventDefault, pipnet.event.supportsPassive ? {passive: false} : false);
             _api.addEventListener('mousedown', _api.preventMiddleScroll);
           } else {
             var style = target.style;
@@ -171,7 +183,7 @@
             _api.removeEventListener('click', api.applyFocus, false, doc);
             _api.removeEventListener('keydown', _api.preventDefaultForScrollKeys);
             _api.removeEventListener('scroll', _api.resetBar);
-            _api.removeEventListener(pipnet.event.wheel.name, _api.preventDefault, {passive: false});
+            _api.removeEventListener(pipnet.event.wheel.name, _api.preventDefault, pipnet.event.supportsPassive ? {passive: false} : false);
             _api.removeEventListener('mousedown', _api.preventMiddleScroll);
           } else {
             target.style.overflow = styleS[0];
@@ -298,7 +310,7 @@
 
   /* Static functions */
   self.addEventListener = function(target, type, f, options) {
-    if(type !== 'barMouseDown' && type !== 'barMouseUp') throw new EvalError("ScrollAPI << This method is only available with barMouseDown and barMouseUp events. Please use classic method for others events");
+    if(type !== 'barMouseDown' && type !== 'barMouseUp') throw new EvalError("ScrollAPI << This method supports only barMouseDown and barMouseUp events. Please use native method for others events");
     this.handleEvent = function(e) {
       var type = e.type;
       if(type !== 'mousedown' && type !== 'mouseup') return;
@@ -310,7 +322,7 @@
     PL.event.add(type, f, options, window);
   },
   self.removeEventListener = function(target, type, f, options) {
-    if(type !== 'barMouseDown' && type !== 'barMouseUp') throw new EvalError("ScrollAPI << This method is only available with barMouseDown and barMouseUp events. Please use classic method for others events");
+    if(type !== 'barMouseDown' && type !== 'barMouseUp') throw new EvalError("ScrollAPI << This method supports only barMouseDown and barMouseUp events. Please use native method for others events");
 
     PL.event.remove(type.substr(3).toLowerCase(), this, options, target);
     PL.event.remove(type, f, options, window);
@@ -330,16 +342,16 @@
     }
     return self.clickedOnBarX(target, e, x, y, isWindow) || self.clickedOnBarY(target, e, y, x, isWindow);
   },
-  self.barHeightX = function(target, isInDOM, isWindow) {
-    return G.bar(target, isInDOM, isWindow, 'Height', 'Width', 'x');
+  self.barHeightX = function(target, isInBody, isWindow) {
+    return G.bar(target, isInBody, isWindow, 'Height', 'Width', 'x');
   },
-  self.barWidthY = function(target, isInDOM, isWindow) {
-    return G.bar(target, isInDOM, isWindow, 'Width', 'Height', 'y');
+  self.barWidthY = function(target, isInBody, isWindow) {
+    return G.bar(target, isInBody, isWindow, 'Width', 'Height', 'y');
   },
-  self.barMeter = function(target, isInDOM, isWindow) {
-    if(isInDOM == null) isInDOM = pipnet.isInDOM(target);
+  self.barMeter = function(target, isInBody, isWindow) {
+    if(isInBody == null) isInBody = pipnet.isInDOM(target);
     if(isWindow == null) isWindow = pipnet.isWindow(target);
-    return {x: self.barHeightX(target, isInDOM, isWindow), y: self.barWidthY(target, isInDOM, isWindow)};
+    return {x: self.barHeightX(target, isInBody, isWindow), y: self.barWidthY(target, isInBody, isWindow)};
   },
   self.atEndX = function(target, isWindow, scrollTop) {
     return G.atEnd(target, isWindow, scrollTop, 'Width', 'Left');
@@ -352,12 +364,12 @@
     scrollMeter || (scrollMeter = PL.element.scrollMeter(target, isWindow, 'round'));
     return self.atEndX(target, isWindow, scrollMeter.x) && self.atEndY(target, isWindow, scrollMeter.y);
   },
-  self.scrollTo = function(target, x, y, isInDOM) { // The target is relative to window
+  self.scrollTo = function(target, x, y, isInBody) { // The target is relative to window
     /* IE7- have some problem to call load event at the good time and return the good document.readyState value */
     if (!pipnet.isIE && (doc.readyState || 'complete') !== 'complete') {
       var stateChange = function() {
         setTimeout(function() {
-          self.scrollTo(target, x, y, isInDOM);
+          self.scrollTo(target, x, y, isInBody);
         }); // Timeout is useless here but resolve bug in Chromium when user refresh the page
         PL.event.remove('load', stateChange, false, window);
       };
@@ -365,8 +377,8 @@
     } else {
       x || (x = 0), y || (y = 0);
       if(typeof target !== 'string') {
-        if(isInDOM == null) isInDOM = pipnet.isInDOM(target);
-        if(!isInDOM) throw new TypeError("ScrollAPI << " + target + " isn't a valid HTMLElement");
+        if(isInBody == null) isInBody = pipnet.isInDOM(target);
+        if(!isInBody) throw new TypeError("ScrollAPI << " + target + " isn't a valid HTMLElement");
         if(x === 0 && y === 0 && 'scrollIntoView' in target) target.scrollIntoView();
         if('getBoundingClientRect' in target) { // Has more precision
           var clientRect = target.getBoundingClientRect();
@@ -383,27 +395,27 @@
       }
     }
   },
-  self.percentX = function(el, round, isInDOM, isWindow) {
-    return G.percent(el, round, isInDOM, isWindow, 'Left', 'Width');
+  self.percentX = function(el, round, isInBody, isWindow) {
+    return G.percent(el, round, isInBody, isWindow, 'Left', 'Width');
   },
-  self.percentY = function(el, round, isInDOM, isWindow) {
-    return G.percent(el, round, isInDOM, isWindow, 'Top', 'Height');
+  self.percentY = function(el, round, isInBody, isWindow) {
+    return G.percent(el, round, isInBody, isWindow, 'Top', 'Height');
   },
-  self.percent = function(el, round, isInDOM, isWindow) {
-    if(isInDOM == null) isInDOM = pipnet.isInDOM(el);
+  self.percent = function(el, round, isInBody, isWindow) {
+    if(isInBody == null) isInBody = pipnet.isInDOM(el);
     if(isWindow == null) isWindow = pipnet.isWindow(el);
-    return {x: self.percentX(el, round, isInDOM, isWindow), y: self.percentY(el, round, isInDOM, isWindow)};
+    return {x: self.percentX(el, round, isInBody, isWindow), y: self.percentY(el, round, isInBody, isWindow)};
   },
-  self.isScrollableX = function(el, isInDOM, isWindow) {
-    return G.isScrollable(el, isInDOM, isWindow, 'Width', 'Height', 'x', 'X', 'Left');
+  self.isScrollableX = function(el, isInBody, isWindow) {
+    return G.isScrollable(el, isInBody, isWindow, 'Width', 'Height', 'x', 'X', 'Left');
   },
-  self.isScrollableY = function(el, isInDOM, isWindow) {
-    return G.isScrollable(el, isInDOM, isWindow, 'Height', 'Width', 'y', 'Y', 'Top');
+  self.isScrollableY = function(el, isInBody, isWindow) {
+    return G.isScrollable(el, isInBody, isWindow, 'Height', 'Width', 'y', 'Y', 'Top');
   },
-  self.isScrollable = function(el, isInDOM, isWindow) {
-    if(isInDOM == null) isInDOM = pipnet.isInDOM(el);
+  self.isScrollable = function(el, isInBody, isWindow) {
+    if(isInBody == null) isInBody = pipnet.isInDOM(el);
     if(isWindow == null) isWindow = pipnet.isWindow(el);
-    return self.isScrollableX(el, isInDOM, isWindow) || self.isScrollableY(el, isInDOM, isWindow);
+    return self.isScrollableX(el, isInBody, isWindow) || self.isScrollableY(el, isInBody, isWindow);
   };
 
   /* API */

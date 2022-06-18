@@ -1,4 +1,4 @@
-# ScrollAPI [Development branch]
+# ScrollAPI
 A simple scroll api for a website
 The main usage of the library is to freeze the scrolling while display a modal box or a floating menu. But there are also a lot of utility things.
 
@@ -36,7 +36,7 @@ The main usage of the library is to freeze the scrolling while display a modal b
   scrollAPI.init();
   scrollAPI.attach(el);
   const instance = el.scrollAPI;
-  window.addEventListener("load", () => {
+  window.addEventListener('load', () => {
     console.log(instance.isFrozen());
     console.log(instance.barWidthY());
     console.log(instance.isScrollable());
@@ -44,20 +44,19 @@ The main usage of the library is to freeze the scrolling while display a modal b
     setTimeout(instance.enable, 1000); //1000ms == 1s
   }, false);
   
-  // if you support old browser and use the legacy API you must check every "new" methods
-  const supportsPassive = scrollAPI.module.compatibility.supportsPassive;
+  // if you support old browser and use the legacy API you must check every "new" methods with pipnet
+  // var supportsPassive = pipnet.event.supportsPassive;
+  const supportsPassive = true;
   
-  document.addEventListener("mousedown", e => {
+  document.addEventListener('mousedown', e => {
     console.log("right bar: " + instance.clickedOnBarY(e));
     console.log("bottom bar: " + instance.clickedOnBarX(e));
     console.log("bottom/right bar: " + instance.clickedOnBar(e));
   }, supportsPassive ? {passive: true} : false);
   
-  window.addEventListener("load", () => {
-    document.addEventListener('scroll', () => {
-      console.log('scrolled percent: ' + instance.percentScroll() + ' %');
-    }, supportsPassive ? {passive: true} : false);
-  }, false);
+  document.addEventListener('scroll', () => {
+    console.log("scrolled percent: " + instance.percentScroll() + " %");
+  }, supportsPassive ? {passive: true} : false);
   ```
   
   Implements your custom modules
@@ -68,7 +67,7 @@ The main usage of the library is to freeze the scrolling while display a modal b
     }
   };
   scrollAPI.init(modules);
-  window.addEventListener("load", () => {
+  window.addEventListener('load', () => {
     console.log("Module test version -> " + scrollAPI.module.test.vers);
   }, false);
   ```
@@ -83,9 +82,9 @@ The main usage of the library is to freeze the scrolling while display a modal b
   
   Static functions
   ```javascript
-  window.addEventListener("load", function() {
+  window.addEventListener('load', function() {
     scrollAPI.scrollTo(el, 0, 10);
-    console.log('scrolled percent: ' + scrollAPI.percentScroll(el) + ' %');
+    console.log("scrolled percent: " + scrollAPI.percentScroll(el) + " %");
     console.log(scrollAPI.barWidthY(el));
     console.log(scrollAPI.isScrollable(el));
     setTimeout(function() {
@@ -105,9 +104,3 @@ The main usage of the library is to freeze the scrolling while display a modal b
 ### Branches
   - [master](https://github.com/Lulu13022002/ScrollAPI) stable state
   - [development](https://github.com/Lulu13022002/ScrollAPI/tree/development) lastest update of the library but there may be some bugs (test are mandatory)
-  
-### References
-  * [Object.keys](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys#Polyfill), [Array.prototype.indexOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf#Polyfill),
-  [supportsPassive](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#Improving_scrolling_performance_with_passive_listeners) from 'scrollAPI@compatibility': Mozilla
-  * isEventSupported, useHasFeature, canUseDOM from 'scrollAPI@polyfill': [facebookarchive/fixed-data-table](https://github.com/facebookarchive/fixed-data-table)
-  * CSS interface from 'scrollAPI@polyfill': [JQuery](https://github.com/jquery/jquery)
